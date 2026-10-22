@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Homework · What’s in Lia’s diary?</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Lora:ital@0;1&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet"><style>
+:root{--bg:#fdf6f5;--blob:#f9e6e6;--card:#ffffff;--line:#f0dcdc;--ink:#4a3b40;--soft:#8c7378;--accent:#d1748b;--label:#b07a86;--chip:#fbeaea;--chipink:#9b5c6b;--input:#fffafa;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#231b1e;--blob:#2f2428;--card:#2c2226;--line:#46363c;--ink:#f3e6e9;--soft:#c3a9b0;--accent:#ee93a9;--label:#d4a3ae;--chip:#3d2c32;--chipink:#f2bccb;--input:#352a2e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#231b1e;--blob:#2f2428;--card:#2c2226;--line:#46363c;--ink:#f3e6e9;--soft:#c3a9b0;--accent:#ee93a9;--label:#d4a3ae;--chip:#3d2c32;--chipink:#f2bccb;--input:#352a2e;color-scheme:dark}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{font-family:Poppins,"Segoe UI",Helvetica,Arial,sans-serif;font-weight:300;color:var(--ink);font-size:17px;line-height:1.45;overflow-x:hidden}
+.wrap{max-width:760px;margin:0 auto;padding:28px 20px 48px;position:relative}
+.blob{position:fixed;border-radius:50%;background:var(--blob);z-index:-1}
+.kick{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--label)}
+h1{font-family:Lora,Georgia,serif;font-weight:400;font-size:28px;margin:4px 0 2px}
+h1 em{color:var(--accent)}
+.secret{display:inline-block;background:var(--chip);color:var(--chipink);border-radius:20px;padding:3px 12px;font-size:14px;margin:6px 0 14px}
+.inst{color:var(--soft);margin:0 0 18px}
+.inst b{color:var(--ink);font-weight:500}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.ph{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:7px}
+.ph img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.cap{font-family:Lora,Georgia,serif;font-size:19px;margin:7px 4px 2px}
+.cap span{color:var(--accent)}
+.chips{margin:0 2px 2px}
+.chip{display:inline-block;background:var(--chip);color:var(--chipink);border-radius:20px;padding:2px 11px;font-size:14px;margin:3px 4px 0 0;font-weight:400}
+.tbl{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.tr{display:grid;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line)}
+.tr.h{border-top:0;background:var(--chip);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--label);padding:9px 14px}
+.a .tr{grid-template-columns:62px 52px 1fr 1.2fr}
+.b .tr{grid-template-columns:62px 52px 1fr}
+.t{font-family:Lora,Georgia,serif;color:var(--accent);font-size:18px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--input);border:0;border-bottom:1.5px solid var(--line);border-radius:6px 6px 0 0;padding:8px 10px;outline:none}
+input:focus,textarea:focus{border-bottom-color:var(--accent)}
+input:focus-visible,textarea:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+textarea{resize:vertical;min-height:70px}
+.frames{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 0}
+.frame{background:var(--card);border:1.5px dashed var(--line);border-radius:12px;padding:8px 14px}
+.frame b{font-weight:500;color:var(--accent)}
+.q{font-family:Lora,Georgia,serif;font-style:italic}
+.lbl{font-size:13px;color:var(--label);margin:22px 0 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:24px}
+.box .cap{margin-top:0}
+.foot{font-size:12px;color:var(--soft);text-align:right;margin-top:26px;opacity:.7}
+@media (max-width:560px){
+ body{font-size:16px}.wrap{padding:22px 14px 40px}h1{font-size:24px}
+ .photos{grid-template-columns:1fr}
+ .tr.h{display:none}
+ .a .tr{grid-template-columns:58px 1fr;row-gap:6px}
+ .a .tr .u{grid-column:2}.a .tr .in{grid-column:1/-1}
+ .b .tr{grid-template-columns:58px 1fr}.b .tr .in{grid-column:1/-1}
+}
+
+.tr .t{white-space:nowrap}
+.a .tr{grid-template-columns:86px 52px 1fr 1.1fr}.b .tr{grid-template-columns:86px 52px 1fr}
+.sd{display:grid;gap:10px}
+.sdi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.sdi .s{margin-bottom:8px}.sdi .s .n{font-family:Lora,Georgia,serif;color:var(--accent);margin-right:8px}
+.toggle{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.toggle button{font:inherit;font-size:15px;border:1.5px solid var(--line);background:var(--input);color:var(--ink);border-radius:20px;padding:4px 14px;cursor:pointer}
+.toggle button[aria-pressed="true"]{border-color:var(--accent);background:var(--chip);color:var(--chipink);font-weight:400}
+.fb{font-size:15px;margin-top:6px;min-height:0}.fb.ok{color:#4d9c6c}.fb.no{color:var(--accent)}
+.msg{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;line-height:2.3}
+.msg input{width:auto;min-width:150px;display:inline-block;padding:3px 8px}
+.btn{font:inherit;background:var(--accent);color:#fff;border:0;border-radius:24px;padding:10px 22px;cursor:pointer;margin:16px 10px 0 0;font-weight:400}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:focus-visible,.toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-family:Lora,Georgia,serif;font-weight:400;font-size:22px;margin:30px 0 4px}
+.your div{margin-bottom:10px}
+@media (max-width:560px){.a .tr{grid-template-columns:80px 1fr}.b .tr{grid-template-columns:80px 1fr}.msg input{min-width:120px}}
+</style></head><body><div class="blob" style="width:340px;height:340px;right:-120px;top:-140px"></div><div class="blob" style="width:260px;height:260px;left:-120px;bottom:-110px"></div><div class="wrap"><div class="kick">Homework</div><h1>What’s in <em>Lia’s diary?</em></h1><p class="inst" style="margin-top:8px">Do all three parts. Then press <b>Copy my answers</b> and send them to me.</p><h2>1. Usually or right now?</h2><p class="inst">Tap the correct answer. Watch out for <b>am / is / are</b>, <b>-s</b> and <b>-ing</b>!</p><div class="sd"><div class="q1 mc" data-i="0"><div class="s"><span class="n">01</span>Dad usually ___ running on Saturdays.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">goes</button><button type="button" aria-pressed="false" data-o="1">go</button><button type="button" aria-pressed="false" data-o="2">is go</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="1"><div class="s"><span class="n">02</span>Look! The twins ___ .</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">sleeping</button><button type="button" aria-pressed="false" data-o="1">are sleeping</button><button type="button" aria-pressed="false" data-o="2">sleep</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="2"><div class="s"><span class="n">03</span>I ___ a selfie right now.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">am taking</button><button type="button" aria-pressed="false" data-o="1">taking</button><button type="button" aria-pressed="false" data-o="2">am take</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="3"><div class="s"><span class="n">04</span>Mum and Dad usually ___ lunch together.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">cooks</button><button type="button" aria-pressed="false" data-o="1">are cook</button><button type="button" aria-pressed="false" data-o="2">cook</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="4"><div class="s"><span class="n">05</span>My best friend ___ the guitar every day.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">play</button><button type="button" aria-pressed="false" data-o="1">plays</button><button type="button" aria-pressed="false" data-o="2">playing</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="5"><div class="s"><span class="n">06</span>Right now Mia ___ Lia’s diary.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">is read</button><button type="button" aria-pressed="false" data-o="1">reading</button><button type="button" aria-pressed="false" data-o="2">is reading</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="6"><div class="s"><span class="n">07</span>Lia ___ black clothes every day.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">wears</button><button type="button" aria-pressed="false" data-o="1">wear</button><button type="button" aria-pressed="false" data-o="2">is wear</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 mc" data-i="7"><div class="s"><span class="n">08</span>Shh! Dad ___ on the sofa.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="0">sleeps</button><button type="button" aria-pressed="false" data-o="1">is sleeping</button><button type="button" aria-pressed="false" data-o="2">sleeping</button></div><div class="fb" aria-live="polite"></div></div></div><button class="btn" id="c1" type="button">Check part 1</button><h2>2. Lia’s diary 👀</h2><p class="inst">Mia is reading Lia’s diary. Read it too!</p><div class="diary"><p><b>Saturday</b></p><p>Every night Mum and Dad think I’m sleeping. But I’m not! I usually write songs at night. Right now I’m writing a new song. It’s about my sister.</p><p>Mia always tells Mum everything about me. But Mia isn’t perfect! She doesn’t go to yoga on Saturdays. She goes to the café with her friends and eats cake. Mum doesn’t know. Shhh! 🤫</p></div><p class="inst" style="margin-top:16px">True or false?</p><div class="sd"><div class="q1 tf" data-i="0"><div class="s"><span class="n">01</span>Lia usually sleeps at night.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="1">True</button><button type="button" aria-pressed="false" data-o="0">False</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 tf" data-i="1"><div class="s"><span class="n">02</span>Right now Lia is writing a song.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="1">True</button><button type="button" aria-pressed="false" data-o="0">False</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 tf" data-i="2"><div class="s"><span class="n">03</span>The song is about Mum.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="1">True</button><button type="button" aria-pressed="false" data-o="0">False</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 tf" data-i="3"><div class="s"><span class="n">04</span>Mia goes to yoga every Saturday.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="1">True</button><button type="button" aria-pressed="false" data-o="0">False</button></div><div class="fb" aria-live="polite"></div></div><div class="q1 tf" data-i="4"><div class="s"><span class="n">05</span>Mia eats cake at the café.</div><div class="toggle"><button type="button" aria-pressed="false" data-o="1">True</button><button type="button" aria-pressed="false" data-o="0">False</button></div><div class="fb" aria-live="polite"></div></div></div><button class="btn" id="c2" type="button">Check part 2</button><h2>3. Lia is angry</h2><p class="inst">Lia sees Mia with her diary. She sends a message to her friend Alex. Write the verbs in the correct form.</p><div class="msg">Alex, I’m so angry!!! Right now Mia <input class="g" aria-label="sit" placeholder="(sit)"> on my bed and she <input class="g" aria-label="read" placeholder="(read)"> my diary! She <input class="g" aria-label="always / tell" placeholder="(always / tell)"> Mum everything! Every Saturday I <input class="g" aria-label="play" placeholder="(play)"> my guitar and she <input class="g" aria-label="want" placeholder="(want)"> to be Mum’s favourite. Why?!</div><button class="btn" id="c3" type="button">Check part 3</button><div class="fb" id="fb3" aria-live="polite"></div><p class="inst" style="margin-top:22px">🤫 <b>Bonus:</b> now Mia knows: Lia knows about the café! Record a voice message as Mia (30 seconds). What is she doing right now? What does she usually do on Saturdays?</p><button class="btn" id="copy" type="button">Copy my answers</button><span class="fb" id="cfb" aria-live="polite"></span><div class="foot">Mia &amp; Lia: Not a normal Saturday</div></div><style>
+.q1{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.q1 .s{margin-bottom:8px}.q1 .s .n{font-family:Lora,Georgia,serif;color:var(--accent);margin-right:8px}
+.diary{background:#2b2427;color:#f3e6e9;border-radius:16px;padding:18px 20px;font-family:Lora,Georgia,serif;font-size:18px;line-height:1.6;margin-top:6px}
+.diary p{margin:0 0 10px}.diary b{color:#ee93a9;font-weight:400}
+.toggle button.right{border-color:#4d9c6c;background:#e5f1ea;color:#2f6b47}
+.toggle button.wrong{border-color:var(--accent);background:var(--chip);color:var(--chipink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .toggle button.right{background:#24382c;color:#9fd8b3}}
+:root[data-theme="dark"] .toggle button.right{background:#24382c;color:#9fd8b3}
+</style><script>const MC=[[["goes", "go", "is go"], 0], [["sleeping", "are sleeping", "sleep"], 1], [["am taking", "taking", "am take"], 0], [["cooks", "are cook", "cook"], 2], [["play", "plays", "playing"], 1], [["is read", "reading", "is reading"], 2], [["wears", "wear", "is wear"], 0], [["sleeps", "is sleeping", "sleeping"], 1]];const TF=[0, 1, 0, 0, 1];const G=[["is sitting"], ["is reading"], ["is always telling"], ["play"], ["wants"]];
+const norm=s=>s.toLowerCase().replace(/[’`]/g,"'").replace(/\s+/g,' ').trim();
+document.querySelectorAll('.q1').forEach(q=>q.querySelectorAll('button').forEach(b=>b.onclick=()=>{q.querySelectorAll('button').forEach(x=>{x.setAttribute('aria-pressed','false');x.classList.remove('right','wrong')});b.setAttribute('aria-pressed','true');q.querySelector('.fb').textContent='';}));
+function check(sel,correct){document.querySelectorAll(sel).forEach((q,i)=>{const p=q.querySelector('[aria-pressed="true"]');const fb=q.querySelector('.fb');fb.className='fb';if(!p){fb.textContent='Choose an answer.';return}const ok=+p.dataset.o===correct(i);p.classList.add(ok?'right':'wrong');fb.textContent=ok?'✓ Yes!':'Not yet. Try again!';fb.classList.add(ok?'ok':'no');});}
+document.getElementById('c1').onclick=()=>check('.mc',i=>MC[i][1]);
+document.getElementById('c2').onclick=()=>check('.tf',i=>TF[i]);
+document.getElementById('c3').onclick=()=>{let ok=0;document.querySelectorAll('.g').forEach((g,i)=>{const r=G[i].includes(norm(g.value));if(r)ok++;g.style.borderBottomColor=r?'#4d9c6c':(g.value?'var(--accent)':'')});const fb=document.getElementById('fb3');fb.className='fb '+(ok===5?'ok':'no');fb.textContent=ok===5?'✓ All correct!':ok+' / 5 correct. Check the red ones.';};
+document.getElementById('copy').onclick=async()=>{const pick=(sel,f)=>[...document.querySelectorAll(sel)].map((q,i)=>{const p=q.querySelector('[aria-pressed="true"]');return (i+1)+'. '+(p?f(p):'—')}).join('\n');
+ let t='Homework: What’s in Lia’s diary?\n\n1. Usually or right now?\n'+pick('.mc',p=>p.textContent)+'\n\n2. True or false\n'+pick('.tf',p=>p.textContent)+'\n\n3. Lia’s message\n'+[...document.querySelectorAll('.g')].map((g,i)=>(i+1)+'. '+g.value).join('\n');
+ const c=document.getElementById('cfb');const done=()=>{c.textContent=' Copied! Paste it in our chat.';c.className='fb ok'};
+ try{await navigator.clipboard.writeText(t);done()}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(_){c.textContent=' Please copy your answers by hand.'}ta.remove()}};
+</script></body></html>
