@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Word Clutch – vocab match</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6DCC3; --panel:#F4EDDB; --panel2:#EADFC4; --ink:#26281E; --muted:#6A6852; --line:#C9BB97;
+  --you:#2F6688; --enemy:#A8761C; --good:#3B7A38; --bad:#B03A2A; --focus:#2F6688;
+  --display:"Chakra Petch", "Rubik", system-ui, sans-serif;
+  --body:"Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1C2018; --panel:#262B20; --panel2:#2F3527; --ink:#ECE5D0; --muted:#A39F86; --line:#3D4532;
+    --you:#76AED6; --enemy:#E0B04A; --good:#82C676; --bad:#E57361; --focus:#76AED6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1C2018; --panel:#262B20; --panel2:#2F3527; --ink:#ECE5D0; --muted:#A39F86; --line:#3D4532;
+  --you:#76AED6; --enemy:#E0B04A; --good:#82C676; --bad:#E57361; --focus:#76AED6;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%; scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0; min-height:100%; background:var(--bg); color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.45}
+button{font:inherit; color:inherit; cursor:pointer}
+button:focus-visible, input:focus-visible{outline:3px solid var(--focus); outline-offset:2px}
+.wrap{max-width:640px; margin:0 auto; padding:20px 16px 40px}
+.hidden{display:none !important}
+
+/* menu */
+.brand{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:8px 0 18px}
+.brand h1{font-family:var(--display); font-weight:700; font-size:2.6rem; line-height:1; margin:0; letter-spacing:-.01em}
+.brand p{margin:6px 0 0; color:var(--muted); font-size:.95rem}
+.tools{display:flex; gap:8px}
+.iconbtn{background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:8px 11px; font-size:1rem}
+.modes{display:grid; gap:10px}
+.mode{display:grid; grid-template-columns:52px 1fr auto; align-items:center; gap:14px; text-align:left;
+  background:var(--panel); border:1px solid var(--line); border-left:6px solid var(--you); border-radius:12px; padding:14px 16px}
+.mode:hover{background:var(--panel2)}
+.mode .ico{font-size:1.9rem; text-align:center}
+.mode b{font-family:var(--display); font-size:1.25rem; display:block}
+.mode span{color:var(--muted); font-size:.92rem}
+.mode .best{font-family:var(--display); font-size:.85rem; color:var(--muted); text-align:right; white-space:nowrap}
+.mode.m2{border-left-color:var(--enemy)} .mode.m3{border-left-color:var(--good)} .mode.m4{border-left-color:var(--bad)}
+.listlink{margin-top:14px; width:100%; background:transparent; border:1px dashed var(--line); border-radius:12px; padding:12px; color:var(--muted)}
+
+/* HUD */
+.hud{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:10px 14px}
+.side{font-family:var(--display); font-size:.9rem; color:var(--muted)}
+.side.r{text-align:right}
+.score{font-family:var(--display); font-weight:700; font-size:2rem; line-height:1; display:flex; gap:10px; align-items:center}
+.score .y{color:var(--you)} .score .e{color:var(--enemy)} .score i{font-style:normal; color:var(--muted); font-size:1.4rem}
+.timer{height:6px; background:var(--panel2); border-radius:3px; margin:10px 2px 0; overflow:hidden}
+.timer div{height:100%; width:100%; background:var(--you); transform-origin:left; transition:background .2s}
+.timer.low div{background:var(--bad)}
+.feed{min-height:26px; margin:10px 2px 0; font-family:var(--display); font-size:.95rem; color:var(--muted); display:flex; justify-content:space-between}
+.feed .kill{color:var(--enemy); font-weight:700}
+
+.card{background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px 18px; margin-top:6px; text-align:center}
+.ask{color:var(--muted); font-size:.95rem; margin:0 0 10px}
+.prompt{font-family:var(--display); font-weight:700; font-size:2.1rem; line-height:1.15; margin:0; word-break:break-word}
+.prompt.ru{font-family:var(--body); font-weight:500; font-size:1.55rem}
+.prompt.sent{font-family:var(--body); font-weight:500; font-size:1.35rem; line-height:1.4}
+.gap{display:inline-block; min-width:4.5em; border-bottom:3px solid var(--you); margin:0 2px}
+.bubble{display:inline-block; text-align:left; background:var(--panel2); border:1px solid var(--line); border-radius:16px 16px 16px 4px; padding:10px 14px; font-size:1.25rem; margin:4px 0 0}
+.bubble .who{display:block; font-size:.78rem; color:var(--muted)}
+.bubble mark{background:transparent; color:var(--enemy); font-weight:700}
+.say{margin-top:12px; background:transparent; border:1px solid var(--line); border-radius:20px; padding:4px 14px; color:var(--muted); font-size:.9rem}
+
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+.opt{background:var(--panel); border:2px solid var(--line); border-radius:12px; padding:14px 12px; min-height:62px; font-size:1.05rem; text-align:left; display:flex; gap:10px; align-items:center}
+.opt .k{font-family:var(--display); font-size:.8rem; color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:1px 6px; flex:none}
+.opt.en{font-family:var(--display); font-weight:700; font-size:1.15rem}
+.opt:hover:not(:disabled){border-color:var(--you)}
+.opt.ok{border-color:var(--good); background:color-mix(in srgb, var(--good) 16%, var(--panel))}
+.opt.no{border-color:var(--bad); background:color-mix(in srgb, var(--bad) 14%, var(--panel))}
+.opt:disabled{cursor:default}
+.answer{margin-top:14px; min-height:48px; text-align:center; font-size:1rem}
+.answer b{font-family:var(--display)}
+.next{display:block; margin:6px auto 0; background:var(--you); color:var(--panel); border:0; border-radius:12px; padding:12px 28px; font-family:var(--display); font-weight:700; font-size:1.1rem}
+
+/* rush */
+.rushword{font-family:var(--display); font-weight:700; font-size:3rem; line-height:1.1; margin:20px 0 6px}
+.rushru{min-height:26px; color:var(--muted)}
+.rushbtns{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px}
+.rb{border-radius:14px; padding:20px 10px; border:2px solid var(--line); background:var(--panel); font-family:var(--display); font-weight:700; font-size:1.3rem}
+.rb.g{border-color:var(--good); color:var(--good)} .rb.b{border-color:var(--bad); color:var(--bad)}
+.rb small{display:block; font-family:var(--body); font-weight:400; font-size:.8rem; color:var(--muted)}
+.flash-ok{animation:fo .35s} .flash-no{animation:fn .35s}
+@keyframes fo{from{background:color-mix(in srgb, var(--good) 30%, var(--panel))}}
+@keyframes fn{from{background:color-mix(in srgb, var(--bad) 30%, var(--panel))}}
+
+/* result */
+.res h2{font-family:var(--display); font-size:2.4rem; margin:6px 0 0; line-height:1.05}
+.res .verdict{color:var(--muted); margin:6px 0 16px}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
+.stat b{display:block; font-family:var(--display); font-size:1.6rem}
+.stat span{font-size:.82rem; color:var(--muted)}
+.miss h3, .words h3{font-family:var(--display); font-size:1.1rem; margin:22px 0 8px}
+.row{display:flex; align-items:center; gap:10px; padding:9px 4px; border-bottom:1px solid var(--line)}
+.row .en{font-family:var(--display); font-weight:700; min-width:40%}
+.row .ru{color:var(--muted); flex:1; font-size:.95rem}
+.row button{background:transparent; border:0; font-size:1.1rem; padding:4px}
+.btnrow{display:flex; gap:10px; margin-top:20px}
+.btnrow button{flex:1; border-radius:12px; padding:12px; font-family:var(--display); font-weight:700; font-size:1.05rem; border:1px solid var(--line); background:var(--panel)}
+.btnrow .primary{background:var(--you); color:var(--panel); border-color:var(--you)}
+.search{width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--line); background:var(--panel); color:var(--ink); font:inherit}
+.back{background:transparent; border:0; color:var(--muted); padding:4px 0; margin-bottom:8px}
+
+@media (max-width:480px){
+  .brand h1{font-size:2.1rem}
+  .opts{grid-template-columns:1fr}
+  .prompt{font-size:1.8rem}
+  .rushword{font-size:2.4rem}
+}
+@media (prefers-reduced-motion: reduce){ .flash-ok,.flash-no{animation:none} .timer div{transition:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- MENU -->
+  <section id="menu">
+    <div class="brand">
+      <div>
+        <h1>Word Clutch</h1>
+        <p>Our lesson words, played like a CS2 match. Right answer = your round.</p>
+      </div>
+      <div class="tools">
+        <button class="iconbtn" id="soundBtn" aria-label="Sound on or off">🔊</button>
+      </div>
+    </div>
+    <div class="modes">
+      <button class="mode" data-mode="quick"><div class="ico">🎯</div><div><b>Quick match</b><span>15 rounds, all words, English ⇄ Russian</span></div><div class="best" data-best="quick"></div></button>
+      <button class="mode m2" data-mode="text"><div class="ico">💬</div><div><b>Text battle</b><span>FR, NVM, IRL, TBH… decode the messages</span></div><div class="best" data-best="text"></div></button>
+      <button class="mode m3" data-mode="gap"><div class="ico">🧩</div><div><b>Fill the gap</b><span>12 sentences, choose the missing word</span></div><div class="best" data-best="gap"></div></button>
+      <button class="mode m4" data-mode="rush"><div class="ico">⭐</div><div><b>Rate it rush</b><span>40 seconds: good word or bad word?</span></div><div class="best" data-best="rush"></div></button>
+    </div>
+    <button class="listlink" id="openWords">See all words with sound</button>
+  </section>
+
+  <!-- GAME (rounds) -->
+  <section id="game" class="hidden">
+    <button class="back" data-home>‹ Menu</button>
+    <div class="hud">
+      <div class="side">You</div>
+      <div class="score"><span class="y" id="sYou">0</span><i>:</i><span class="e" id="sEnemy">0</span></div>
+      <div class="side r">Enemy</div>
+    </div>
+    <div class="timer" id="timer"><div id="timerBar"></div></div>
+    <div class="feed"><span id="roundTxt">Round 1</span><span id="feedTxt"></span></div>
+    <div class="card" id="qCard">
+      <p class="ask" id="ask"></p>
+      <div id="promptBox"></div>
+      <button class="say hidden" id="sayBtn">🔊 Listen</button>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="answer" id="answer"></div>
+  </section>
+
+  <!-- RUSH -->
+  <section id="rush" class="hidden">
+    <button class="back" data-home>‹ Menu</button>
+    <div class="hud">
+      <div class="side">Score</div>
+      <div class="score"><span class="y" id="rScore">0</span></div>
+      <div class="side r" id="rTime">40s</div>
+    </div>
+    <div class="timer" id="rTimer"><div id="rTimerBar"></div></div>
+    <div class="card" id="rCard">
+      <p class="ask">Is it a good word 🙂 or a bad word 🙁?</p>
+      <div class="rushword" id="rWord"></div>
+      <div class="rushru" id="rRu"></div>
+    </div>
+    <div class="rushbtns">
+      <button class="rb b" id="rBad">👎 Bad<small>← key</small></button>
+      <button class="rb g" id="rGood">👍 Good<small>→ key</small></button>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section id="result" class="hidden res">
+    <p class="ask" id="resMode"></p>
+    <h2 id="resTitle"></h2>
+    <p class="verdict" id="resVerdict"></p>
+    <div class="stats">
+      <div class="stat"><b id="resScore">0</b><span>points</span></div>
+      <div class="stat"><b id="resAcc">0%</b><span>correct</span></div>
+      <div class="stat"><b id="resStreak">0</b><span>best streak</span></div>
+    </div>
+    <div class="miss" id="missBox"></div>
+    <div class="btnrow">
+      <button data-home>Menu</button>
+      <button class="primary" id="again">Play again</button>
+    </div>
+  </section>
+
+  <!-- WORD LIST -->
+  <section id="words" class="hidden words">
+    <button class="back" data-home>‹ Menu</button>
+    <input class="search" id="search" placeholder="Search a word in English or Russian" aria-label="Search words">
+    <div id="wordList"></div>
+  </section>
+</div>
+
+<script>
+/* ---------- DATA ---------- */
+const ACR = [
+  {en:"FR", full:"for real", ru:"серьёзно, по-настоящему", msg:"FR, that last round was crazy!"},
+  {en:"NVM", full:"never mind", ru:"не важно, забей", msg:"NVM, I found my headphones."},
+  {en:"IRL", full:"in real life", ru:"в реальной жизни", msg:"IRL I’m tired, not in the game."},
+  {en:"ASAP", full:"as soon as possible", ru:"как можно быстрее", msg:"Call me back ASAP!", say:"ay sap"},
+  {en:"TTYL", full:"talk to you later", ru:"поговорим позже", msg:"Gotta go, TTYL!"},
+  {en:"CU", full:"see you", ru:"увидимся", msg:"CU at 8!", say:"see you"},
+  {en:"LOL", full:"laughing out loud", ru:"очень смешно", msg:"You lost to a bot? LOL", say:"lol"},
+  {en:"BRB", full:"be right back", ru:"скоро вернусь", msg:"BRB, I need a snack."},
+  {en:"IDK", full:"I don’t know", ru:"я не знаю", msg:"IDK what to play tonight."},
+  {en:"TBH", full:"to be honest", ru:"честно говоря", msg:"TBH, Dota 2 is boring."},
+  {en:"OMW", full:"on my way", ru:"еду / иду", msg:"OMW, 5 minutes!"},
+  {en:"RN", full:"right now", ru:"прямо сейчас", msg:"I’m busy RN."},
+  {en:"BTW", full:"by the way", ru:"кстати", msg:"BTW, Anna says hi."},
+  {en:"NP", full:"no problem", ru:"без проблем", msg:"Thanks for the ride! — NP!"},
+  {en:"WYD", full:"what (are) you doing?", ru:"что ты делаешь?", msg:"Hey, WYD tonight?"},
+  {en:"IMO", full:"in my opinion", ru:"по моему мнению", msg:"IMO, CS2 is better than Valorant."}
+];
+const GOOD = [
+  ["hilarious","очень смешной"],["lovely","чудесный, милый"],["exciting","волнующий"],["thrilling","захватывающий"],
+  ["respectable","уважаемый, почтенный"],["graceful","грациозный, изящный"],["pleasant","приятный"],["useful","полезный"],
+  ["important","важный"],["harmless","безвредный, безобидный"],["stunning","сногсшибательный"],["magnificent","великолепный"],
+  ["pretty","симпатичный, хорошенький"],["beautiful","красивый, прекрасный"],["incredible","невероятный, потрясающий"],
+  ["superb","превосходный"],["outstanding","выдающийся"],["remarkable","замечательный"],["extraordinary","необычайный"],
+  ["breathtaking","захватывающий дух"]
+];
+const BAD = [
+  ["tiring","утомительный"],["annoying","раздражающий, надоедливый"],["irritating","раздражающий"],["confusing","запутанный, непонятный"],
+  ["useless","бесполезный"],["odd","странный, необычный"],["unpleasant","неприятный"],["nasty","противный"],
+  ["disgusting","отвратительный"],["frightening","пугающий, страшный"],["horrible","ужасный"],["disastrous","катастрофический"],
+  ["mediocre","посредственный"],["disappointing","разочаровывающий"],["awful","ужасный (очень плохой)"],["terrible","кошмарный"]
+];
+const GAME = [
+  ["sandbox","песочница"],["enemy","враг"],["vote","голосовать"],["traitor","предатель"],["stay up late","поздно ложиться"],
+  ["tense","напряжённый"],["suggest","предлагать, советовать"],["busy","занятой"],["lie","ложь"]
+];
+const LIFE = [
+  ["get / got","получать / получил",,"get, got"],["gave","дал, подарил"],["part","часть"],["highlight","выделять, подчёркивать"],
+  ["had","имел (past simple of have)"],["how often","как часто"],["once a week","один раз в неделю"],["twice a month","два раза в месяц"],
+  ["three times a year","три раза в год"],["four times a week","четыре раза в неделю"],["toll road","платная дорога"],
+  ["give a ride","подвозить"],["have a dentist appointment","приём у стоматолога"],["sleep in","поспать подольше"],
+  ["foreign","иностранный"],["look","выглядеть"],["tell / told","рассказывать / рассказал",,"tell, told"],["cheaper","дешевле"],
+  ["recently","недавно, в последнее время"],["raw","сырой"],["get older","становиться старше"],["vacation","отпуск"],
+  ["agree","соглашаться"],["alone","один"],["my head hurts","у меня болит голова"],["could","мог, мог бы"],["often","часто"],
+  ["already","уже"],["quickly","быстро"],["since","с (тех пор)"],["in a row","подряд"],["have nothing to do","нечего делать"],
+  ["do nothing","ничего не делать"],["once","один раз, однажды"],["a long time ago","давным-давно"],
+  ["I’d rather","я бы лучше, я бы предпочёл"],["taste","быть на вкус"]
+];
+const VOCAB = [
+  ...ACR.map(a=>({en:a.en, ru:a.full+" — "+a.ru, cat:"txt", say:a.say||a.en.split("").join(" ")})),
+  ...GOOD.map(w=>({en:w[0], ru:w[1], cat:"good"})),
+  ...BAD.map(w=>({en:w[0], ru:w[1], cat:"bad"})),
+  ...GAME.map(w=>({en:w[0], ru:w[1], cat:"game"})),
+  ...LIFE.map(w=>({en:w[0], ru:w[1], cat:"life", say:w[3]}))
+];
+const GAPS = [
+  {s:"How ___ do you play CS2? — Every day!", a:"often", d:["since","already","alone"]},
+  {s:"I go to the dentist ___ a year.", a:"once", d:["often","since","already"]},
+  {s:"I can’t play at 3 p.m. — I have a dentist ___.", a:"appointment", d:["vacation","toll road","part"]},
+  {s:"It’s Saturday! I want to ___ until 11.", a:"sleep in", d:["get older","highlight","agree"]},
+  {s:"Can you give me a ___ to the airport?", a:"ride", d:["part","lie","vote"]},
+  {s:"We took a ___ road. It was fast, but not free.", a:"toll", d:["raw","odd","busy"]},
+  {s:"The train is ___ than the plane.", a:"cheaper", d:["recently","already","quickly"]},
+  {s:"I lost 5 matches in a ___. Awful!", a:"row", d:["part","lie","taste"]},
+  {s:"I’ve ___ finished my work. Let’s play!", a:"already", d:["since","often","alone"]},
+  {s:"I have lived in this city ___ 2020.", a:"since", d:["already","once","recently"]},
+  {s:"Sushi often has ___ fish — it’s not cooked.", a:"raw", d:["busy","already","quickly"]},
+  {s:"Mmm, this soup ___ amazing!", a:"tastes", d:["agrees","suggests","votes"]},
+  {s:"Wow, Anna ___ beautiful today!", a:"looks", d:["tastes","tells","gets"]},
+  {s:"I’m bored. I have ___.", a:"nothing to do", d:["do nothing","a long time ago","in a row"]},
+  {s:"He lied to the team. He is a ___!", a:"traitor", d:["sandbox","vacation","highlight"]},
+  {s:"I’d ___ play CS2 than watch TV.", a:"rather", d:["since","alone","already"]},
+  {s:"1v1, five seconds left — very ___!", a:"tense", d:["harmless","useful","respectable"]},
+  {s:"I ___ with you. Breaking Bad is brilliant.", a:"agree", d:["taste","highlight","look"]},
+  {s:"Yesterday I ___ Anna a present.", a:"gave", d:["had","told","agreed"]},
+  {s:"Last week I ___ a dentist appointment.", a:"had", d:["gave","told","looked"]},
+  {s:"Max ___ me a hilarious story yesterday.", a:"told", d:["had","looked","tasted"]},
+  {s:"I can’t play today — my head ___.", a:"hurts", d:["tastes","looks","agrees"]},
+  {s:"When I was 15, I ___ play all night.", a:"could", d:["since","alone","already"]},
+  {s:"That meme is ___! LOL", a:"hilarious", d:["respectable","useful","graceful"]},
+  {s:"I ___ a new keyboard for my birthday!", a:"got", d:["told","agreed","looked"]},
+  {s:"Next month I’m going on ___ to Thailand.", a:"vacation", d:["appointment","toll road","sandbox"]},
+  {s:"Let’s ___ for the next map.", a:"vote", d:["taste","highlight","lie"]},
+  {s:"Don’t ___ — you have work tomorrow!", a:"stay up late", d:["get older","toll road","in a row"]},
+  {s:"Every birthday I get ___.", a:"older", d:["since","already","often"]},
+  {s:"I was in Dubai ___ — maybe 10 years ago.", a:"a long time ago", d:["in a row","recently","since"]},
+  {s:"I ___ you try Valorant. It’s fun!", a:"suggest", d:["vote","taste","look"]},
+  {s:"Please ___ the new words in yellow.", a:"highlight", d:["vote","taste","lie"]},
+  {s:"This is the best ___ of the series!", a:"part", d:["lie","row","taste"]},
+  {s:"I like ___ food — Thai, Japanese, Italian.", a:"foreign", d:["busy","alone","tense"]},
+  {s:"Have you watched any good series ___?", a:"recently", d:["since","alone","quickly"]},
+  {s:"Nobody wants to play, so I play ___.", a:"alone", d:["already","since","recently"]},
+  {s:"Sorry, I’m ___ RN. TTYL!", a:"busy", d:["raw","harmless","graceful"]},
+  {s:"The ___ team is on B site!", a:"enemy", d:["sandbox","vacation","toll"]},
+  {s:"In Minecraft I like ___ mode — I build what I want.", a:"sandbox", d:["enemy","traitor","vacation"]},
+  {s:"You never played Dota? That’s a ___!", a:"lie", d:["vote","part","row"]},
+  {s:"On Sunday I ___ — I just lie on the sofa.", a:"do nothing", d:["give a ride","get older","highlight"]},
+  {s:"I play CS2 ___ a week — on Monday and Friday.", a:"twice", d:["once","four times","since"]},
+  {s:"___ do you travel? — Three times a year.", a:"How often", d:["Already","Recently","Quickly"]},
+  {s:"He answered very ___ — in 2 seconds!", a:"quickly", d:["already","since","alone"]}
+];
+
+/* ---------- HELPERS ---------- */
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+const pick = (arr,n) => shuffle(arr).slice(0,n);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem("wc_"+k); return v===null?d:JSON.parse(v);}catch(e){return d;} },
+  set(k,v){ try{ localStorage.setItem("wc_"+k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* sound */
+let soundOn = store.get("sound", true);
+let voice = null;
+function loadVoice(){
+  try{
+    const vs = speechSynthesis.getVoices();
+    voice = vs.find(v=>v.lang==="en-US" && /Samantha|Google US|Aria|Jenny|Natural/i.test(v.name)) || vs.find(v=>v.lang==="en-US") || vs.find(v=>/^en/.test(v.lang)) || null;
+  }catch(e){}
+}
+if ("speechSynthesis" in window){ loadVoice(); speechSynthesis.onvoiceschanged = loadVoice; }
+function speak(text, force){
+  if ((!soundOn && !force) || !("speechSynthesis" in window) || !text) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[’]/g,"'"));
+    u.lang = "en-US"; u.rate = .9; if (voice) u.voice = voice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+const sayOf = w => w.say || w.en.replace(/[’]/g,"'");
+function renderSound(){ $("soundBtn").textContent = soundOn ? "🔊" : "🔇"; $("soundBtn").setAttribute("aria-pressed", soundOn); }
+$("soundBtn").onclick = () => { soundOn = !soundOn; store.set("sound", soundOn); renderSound(); };
+renderSound();
+
+/* screens */
+function show(id){ ["menu","game","rush","result","words"].forEach(s=>$(s).classList.toggle("hidden", s!==id)); window.scrollTo(0,0); }
+document.querySelectorAll("[data-home]").forEach(b=>b.onclick=()=>{ stopTimers(); renderBest(); show("menu"); });
+
+const MODE_NAMES = {quick:"Quick match", text:"Text battle", gap:"Fill the gap", rush:"Rate it rush"};
+function renderBest(){
+  document.querySelectorAll("[data-best]").forEach(el=>{
+    const b = store.get("best_"+el.dataset.best, null);
+    el.textContent = b===null ? "" : "Best " + b;
+  });
+}
+renderBest();
+
+/* ---------- QUESTION BUILDERS ---------- */
+function distractorsFor(w, field){
+  let pool = VOCAB.filter(v=>v.cat===w.cat && v.en!==w.en);
+  if (pool.length < 3) pool = VOCAB.filter(v=>v.en!==w.en);
+  return pick(pool,3).map(v=>v[field]);
+}
+function buildQuick(){
+  return pick(VOCAB,15).map(w=>{
+    const toRu = Math.random() < .5;
+    if (toRu){
+      const opts = shuffle([w.ru, ...distractorsFor(w,"ru")]);
+      return {ask:"What does it mean?", prompt:w.en, kind:"en", opts, optLang:"ru", ans:opts.indexOf(w.ru), sayQ:sayOf(w), sayA:sayOf(w), reveal:`<b>${esc(w.en)}</b> — ${esc(w.ru)}`, miss:w};
+    }
+    const opts = shuffle([w.en, ...distractorsFor(w,"en")]);
+    return {ask:"How do you say it in English?", prompt:w.ru, kind:"ru", opts, optLang:"en", ans:opts.indexOf(w.en), sayA:sayOf(w), reveal:`<b>${esc(w.en)}</b> — ${esc(w.ru)}`, miss:w};
+  });
+}
+function buildText(){
+  return shuffle(ACR).map(a=>{
+    const others = pick(ACR.filter(x=>x!==a),3);
+    const w = VOCAB.find(v=>v.en===a.en);
+    const t = Math.floor(Math.random()*3);
+    const reveal = `<b>${a.en}</b> = ${esc(a.full)} — ${esc(a.ru)}`;
+    if (t===0){
+      const opts = shuffle([a.full, ...others.map(o=>o.full)]);
+      const msg = esc(a.msg).replace(a.en, `<mark>${a.en}</mark>`);
+      return {ask:`Max texts you. What does ${a.en} mean?`, html:`<div class="bubble"><span class="who">Max</span>${msg}</div>`, opts, optLang:"en", ans:opts.indexOf(a.full), sayQ:a.msg, sayA:a.full, reveal, miss:w};
+    }
+    const opts = shuffle([a.en, ...others.map(o=>o.en)]);
+    if (t===1) return {ask:"Which acronym is it?", prompt:a.ru, kind:"ru", opts, optLang:"en", ans:opts.indexOf(a.en), sayA:a.full, reveal, miss:w};
+    return {ask:"Text it shorter! Which acronym?", prompt:a.full, kind:"en", opts, optLang:"en", ans:opts.indexOf(a.en), sayQ:a.full, sayA:a.full, reveal, miss:w};
+  });
+}
+function buildGap(){
+  return pick(GAPS,12).map(g=>{
+    const opts = shuffle([g.a, ...g.d]);
+    const full = g.s.replace("___", g.a);
+    const html = `<p class="prompt sent">${esc(g.s).replace("___",'<span class="gap">&nbsp;</span>')}</p>`;
+    return {ask:"Choose the missing word.", html, opts, optLang:"en", ans:opts.indexOf(g.a), sayA:full, reveal:esc(full), miss:{en:g.a, ru:full, say:full}};
+  });
+}
+
+/* ---------- ROUND GAME ---------- */
+let G = null, tHandle = null, tStart = 0, tLen = 12000;
+const TIME = {quick:12000, text:12000, gap:16000};
+function stopTimers(){ cancelAnimationFrame(tHandle); clearInterval(R && R.int); try{speechSynthesis.cancel();}catch(e){} }
+
+function startMode(mode){
+  if (mode==="rush") return startRush();
+  const qs = mode==="quick" ? buildQuick() : mode==="text" ? buildText() : buildGap();
+  G = {mode, qs, i:0, you:0, enemy:0, score:0, streak:0, bestStreak:0, misses:[], locked:false};
+  tLen = TIME[mode];
+  show("game");
+  renderQ();
+}
+document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>startMode(b.dataset.mode));
+
+function renderQ(){
+  const q = G.qs[G.i];
+  G.locked = false;
+  $("sYou").textContent = G.you; $("sEnemy").textContent = G.enemy;
+  $("roundTxt").textContent = `Round ${G.i+1} / ${G.qs.length}`;
+  $("ask").textContent = q.ask;
+  $("promptBox").innerHTML = q.html || `<p class="prompt ${q.kind==="ru"?"ru":""}">${esc(q.prompt)}</p>`;
+  $("sayBtn").classList.toggle("hidden", !q.sayQ);
+  $("sayBtn").onclick = () => speak(q.sayQ, true);
+  $("answer").innerHTML = "";
+  const box = $("opts"); box.innerHTML = "";
+  q.opts.forEach((o,idx)=>{
+    const b = document.createElement("button");
+    b.className = "opt" + (q.optLang==="en" ? " en" : "");
+    b.innerHTML = `<span class="k">${idx+1}</span><span>${esc(o)}</span>`;
+    b.onclick = () => choose(idx);
+    box.appendChild(b);
+  });
+  if (q.sayQ && q.kind!=="ru" && G.mode!=="gap") speak(q.sayQ);
+  tStart = performance.now();
+  $("timer").classList.remove("low");
+  tick();
+}
+function tick(){
+  const left = Math.max(0, 1 - (performance.now()-tStart)/tLen);
+  $("timerBar").style.transform = `scaleX(${left})`;
+  $("timer").classList.toggle("low", left < .3);
+  if (left <= 0){ choose(-1); return; }
+  tHandle = requestAnimationFrame(tick);
+}
+const KILLS = {3:"Triple kill 🔥", 4:"Quad kill 🔥🔥", 5:"ACE! 💥"};
+function choose(idx){
+  if (G.locked) return;
+  G.locked = true;
+  cancelAnimationFrame(tHandle);
+  const q = G.qs[G.i];
+  const btns = [...$("opts").children];
+  btns.forEach(b=>b.disabled = true);
+  btns[q.ans].classList.add("ok");
+  const right = idx === q.ans;
+  const timeLeft = Math.max(0, 1 - (performance.now()-tStart)/tLen);
+  let feed = "";
+  if (right){
+    G.you++; G.streak++; G.bestStreak = Math.max(G.bestStreak, G.streak);
+    const pts = 100 + Math.round(timeLeft*50) + (G.streak>=3 ? 25*(G.streak-2) : 0);
+    G.score += pts;
+    feed = (G.streak>=5 ? KILLS[5] : KILLS[G.streak] || "") ;
+    $("answer").innerHTML = `<div>✅ +${pts} — ${q.reveal}</div>`;
+  } else {
+    G.enemy++; G.streak = 0;
+    if (idx >= 0) btns[idx].classList.add("no");
+    feed = idx < 0 ? "Time’s up ⏱️" : "";
+    G.misses.push(q.miss);
+    $("answer").innerHTML = `<div>❌ ${q.reveal}</div>`;
+  }
+  $("sYou").textContent = G.you; $("sEnemy").textContent = G.enemy;
+  $("feedTxt").innerHTML = feed ? `<span class="kill">${feed}</span>` : "";
+  speak(q.sayA);
+  const nb = document.createElement("button");
+  nb.className = "next"; nb.textContent = G.i+1 < G.qs.length ? "Next round" : "See result";
+  nb.onclick = nextQ;
+  $("answer").appendChild(nb);
+  nb.focus({preventScroll:true});
+}
+function nextQ(){
+  G.i++;
+  if (G.i >= G.qs.length) return finish(G.mode, G.score, G.you/G.qs.length, G.bestStreak, G.misses, `${G.you} : ${G.enemy}`, G.you > G.enemy);
+  renderQ();
+}
+
+/* ---------- RUSH ---------- */
+let R = null;
+function startRush(){
+  const words = [...GOOD.map(w=>({en:w[0],ru:w[1],good:true})), ...BAD.map(w=>({en:w[0],ru:w[1],good:false}))];
+  R = {deck:shuffle(words), i:0, score:0, right:0, total:0, streak:0, bestStreak:0, misses:[], end:Date.now()+40000, int:null, busy:false};
+  show("rush");
+  $("rScore").textContent = 0;
+  showRush();
+  R.int = setInterval(()=>{
+    const left = Math.max(0, R.end - Date.now());
+    $("rTime").textContent = Math.ceil(left/1000) + "s";
+    $("rTimerBar").style.transform = `scaleX(${left/40000})`;
+    $("rTimer").classList.toggle("low", left < 10000);
+    if (left <= 0){ clearInterval(R.int); R.busy = true;
+      finish("rush", R.score, R.total ? R.right/R.total : 0, R.bestStreak, R.misses, `${R.right} / ${R.total}`, R.right/(R.total||1) >= .7); }
+  }, 100);
+}
+function showRush(){
+  if (R.i >= R.deck.length){ R.deck = shuffle(R.deck); R.i = 0; }
+  const w = R.deck[R.i];
+  $("rWord").textContent = w.en; $("rRu").textContent = "";
+  R.busy = false;
+}
+function rushAnswer(saysGood){
+  if (!R || R.busy) return;
+  R.busy = true;
+  const w = R.deck[R.i];
+  const right = saysGood === w.good;
+  R.total++;
+  const card = $("rCard"); card.classList.remove("flash-ok","flash-no"); void card.offsetWidth;
+  if (right){ R.right++; R.streak++; R.bestStreak=Math.max(R.bestStreak,R.streak); R.score += 10 + (R.streak>=3?5:0); card.classList.add("flash-ok"); }
+  else { R.streak=0; R.misses.push({en:w.en, ru:w.ru + (w.good?" 🙂":" 🙁")}); card.classList.add("flash-no"); }
+  $("rScore").textContent = R.score;
+  $("rRu").textContent = (right?"✅ ":"❌ ") + w.ru;
+  speak(w.en);
+  R.i++;
+  setTimeout(()=>{ if (Date.now() < R.end) showRush(); }, right ? 550 : 1100);
+}
+$("rGood").onclick = () => rushAnswer(true);
+$("rBad").onclick = () => rushAnswer(false);
+
+/* ---------- RESULT ---------- */
+const RATING = [
+  [.95,"Absolutely outstanding","You’re a vocab legend. GG!"],
+  [.8,"Superb","Very good match. TBH, almost perfect."],
+  [.6,"Pretty good","Nice game. Review the words below and play again."],
+  [.4,"Mediocre","Not bad, not great. One more match?"],
+  [0,"Disastrous","Ugh! Check the words below — then rematch ASAP."]
+];
+let lastMode = "quick";
+function finish(mode, score, acc, best, misses, line, won){
+  stopTimers();
+  lastMode = mode;
+  const prev = store.get("best_"+mode, 0);
+  if (score > prev) store.set("best_"+mode, score);
+  const r = RATING.find(x=>acc >= x[0]);
+  $("resMode").textContent = `${MODE_NAMES[mode]} — ${line}` + (mode!=="rush" ? (won ? " · you win" : " · enemy wins") : "") + (score > prev && prev ? " · new best!" : "");
+  $("resTitle").textContent = r[1];
+  $("resVerdict").textContent = r[2];
+  $("resScore").textContent = score;
+  $("resAcc").textContent = Math.round(acc*100) + "%";
+  $("resStreak").textContent = best;
+  const uniq = []; misses.forEach(m=>{ if(!uniq.find(u=>u.en===m.en)) uniq.push(m); });
+  $("missBox").innerHTML = uniq.length
+    ? `<h3>Words to practise (${uniq.length})</h3>` + uniq.map((m,i)=>`<div class="row"><button aria-label="Listen" data-say="${i}">🔊</button><span class="en">${esc(m.en)}</span><span class="ru">${esc(m.ru)}</span></div>`).join("")
+    : `<h3>No mistakes. FR, that’s incredible! 🏆</h3>`;
+  $("missBox").querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>speak(sayOf(uniq[+b.dataset.say]), true));
+  show("result");
+}
+$("again").onclick = () => startMode(lastMode);
+
+/* ---------- WORD LIST ---------- */
+const CATS = [["txt","Texting"],["good","Good words 🙂"],["bad","Bad words 🙁"],["game","Games"],["life","Everyday"]];
+function renderWords(filter){
+  const f = (filter||"").toLowerCase().trim();
+  let html = "";
+  CATS.forEach(([c,name])=>{
+    const ws = VOCAB.filter(v=>v.cat===c && (!f || v.en.toLowerCase().includes(f) || v.ru.toLowerCase().includes(f)));
+    if (!ws.length) return;
+    html += `<h3>${name}</h3>` + ws.map(w=>`<div class="row"><button aria-label="Listen" data-w="${esc(w.en)}">🔊</button><span class="en">${esc(w.en)}</span><span class="ru">${esc(w.ru)}</span></div>`).join("");
+  });
+  $("wordList").innerHTML = html || `<p class="ask">No words match “${esc(filter)}”. Try another spelling.</p>`;
+  $("wordList").querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>speak(sayOf(VOCAB.find(v=>v.en===b.dataset.w)), true));
+}
+$("openWords").onclick = () => { renderWords(""); $("search").value=""; show("words"); };
+$("search").oninput = e => renderWords(e.target.value);
+
+/* ---------- KEYBOARD ---------- */
+document.addEventListener("keydown", e=>{
+  if (!$("game").classList.contains("hidden") && G){
+    if (!G.locked && /^[1-4]$/.test(e.key)) choose(+e.key-1);
+    else if (G.locked && (e.key==="Enter" || e.key===" ")){ e.preventDefault(); nextQ(); }
+  }
+  if (!$("rush").classList.contains("hidden")){
+    if (e.key==="ArrowRight") rushAnswer(true);
+    if (e.key==="ArrowLeft") rushAnswer(false);
+  }
+});
+</script>
+</body>
+</html>
