@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Homework: Plans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F7FB;--card:#FFFFFF;--ink:#1F2937;--muted:#6B7280;--line:#D6DCE8;--navy:#1F2A44;--navy2:#2B3960;
+  --teal:#0F9A8A;--orange:#EA6A0A;--purple:#6D4AF0;--blue:#2F6FE0;--pink:#D93A6E;--green:#1C9450;--yellow:#FCD34D;
+  --t-teal:#E2F6F3;--t-orange:#FFF0E3;--t-purple:#EFEAFF;--t-blue:#E6EEFD;--t-pink:#FCE7EF;--t-green:#E2F5EA;--t-yellow:#FFF6D3;
+  --ok:#1C9450;--bad:#D93A6E;--bubble-me:#DDF5EC;--field:#FFFFFF;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11172A;--card:#1A2236;--ink:#E7EBF3;--muted:#9BA6BC;--line:#2F3B55;--navy:#0B1020;--navy2:#24304F;
+    --teal:#3CCDB9;--orange:#FF9A4D;--purple:#A894FF;--blue:#79A6FF;--pink:#FF7EA8;--green:#4FD58A;--yellow:#F5C842;
+    --t-teal:#16343A;--t-orange:#3A2717;--t-purple:#2A2450;--t-blue:#1B2B4D;--t-pink:#3B1E2D;--t-green:#173523;--t-yellow:#3A3216;
+    --ok:#4FD58A;--bad:#FF7EA8;--bubble-me:#173A31;--field:#121A2C;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11172A;--card:#1A2236;--ink:#E7EBF3;--muted:#9BA6BC;--line:#2F3B55;--navy:#0B1020;--navy2:#24304F;
+  --teal:#3CCDB9;--orange:#FF9A4D;--purple:#A894FF;--blue:#79A6FF;--pink:#FF7EA8;--green:#4FD58A;--yellow:#F5C842;
+  --t-teal:#16343A;--t-orange:#3A2717;--t-purple:#2A2450;--t-blue:#1B2B4D;--t-pink:#3B1E2D;--t-green:#173523;--t-yellow:#3A3216;
+  --ok:#4FD58A;--bad:#FF7EA8;--bubble-me:#173A31;--field:#121A2C;color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Poppins,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding:16px 14px 60px}
+h1,h2,h3{margin:0;line-height:1.2}
+button{font:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,label:focus-within{outline:2px solid var(--blue);outline-offset:2px}
+.hero{background:#1F2A44;color:#fff;border-radius:18px;padding:22px 22px 20px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+:root[data-theme="dark"] .hero{background:var(--navy2)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:var(--navy2)}}
+.hero h1{font-size:clamp(24px,5vw,32px);font-weight:700}
+.hero p{margin:4px 0 0;color:#FCD34D;font-weight:500}
+.hero .tag{display:inline-block;background:#12A594;color:#fff;font-size:11px;font-weight:700;border-radius:20px;padding:2px 10px;margin-bottom:8px}
+.hero .bubbles{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.hero .bub{background:#fff;color:#F97316;font-weight:700;font-size:13px;border-radius:14px;padding:4px 12px;white-space:nowrap}
+.hero .bub.g{background:#DFF7EE}
+@media(max-width:560px){.hero .bubbles{display:none}}
+.legend{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;color:var(--muted);font-size:12.5px;margin:10px 4px 4px}
+.badge{display:inline-block;font-size:11px;font-weight:600;border-radius:20px;padding:1px 9px;vertical-align:middle}
+.b-core{background:var(--yellow);color:#1F2A44}
+.b-opt{border:1px solid var(--muted);color:var(--muted)}
+section{margin-top:22px}
+.sh{display:flex;align-items:center;gap:10px;color:#fff;border-radius:16px;padding:7px 14px 7px 8px}
+.sh .n{background:#fff;border-radius:50%;width:26px;height:26px;display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.sh h2{font-size:17px;font-weight:600}
+.sub{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-style:italic;font-size:13.5px;margin:8px 4px 10px}
+.c-teal{background:#12A594}.c-teal .n{color:#12A594}
+.c-orange{background:#F97316}.c-orange .n{color:#F97316}
+.c-purple{background:#7C5CFC}.c-purple .n{color:#7C5CFC}
+.c-blue{background:#3B82F6}.c-blue .n{color:#3B82F6}
+.c-pink{background:#E8457A}.c-pink .n{color:#E8457A}
+.c-green{background:#22A559}.c-green .n{color:#22A559}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+.tint{border-radius:14px;padding:12px 14px}
+.ty{background:var(--t-yellow)}.to{background:var(--t-orange)}.tp{background:var(--t-purple)}.tb{background:var(--t-blue)}.tg{background:var(--t-green)}.tk{background:var(--t-pink)}.tt{background:var(--t-teal)}
+input[type=text],textarea,select{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:8px;padding:6px 10px;width:100%}
+textarea{resize:vertical;min-height:58px}
+input.gap{width:130px;display:inline-block;padding:3px 8px;margin:0 4px}
+input.ok,select.ok{border-color:var(--ok);box-shadow:0 0 0 2px color-mix(in srgb,var(--ok) 30%,transparent)}
+input.bad,select.bad{border-color:var(--bad);box-shadow:0 0 0 2px color-mix(in srgb,var(--bad) 30%,transparent)}
+.btn{border:none;border-radius:20px;padding:7px 16px;font-weight:600;font-size:14px;color:#fff;background:#1F2A44}
+:root[data-theme="dark"] .btn{background:#3B4A72}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{background:#3B4A72}}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{font-weight:600;font-size:14px}
+.result.good{color:var(--ok)}.result.meh{color:var(--orange)}
+.say{border:none;background:transparent;font-size:16px;padding:0 4px;line-height:1}
+/* birthday */
+.stars button{border:none;background:none;font-size:26px;color:var(--line);padding:0 2px}
+.stars button.on{color:#F5A524}
+/* warm-up grid */
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media(max-width:720px){.grid5{grid-template-columns:repeat(2,1fr)}}
+.wcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.wcard .t{display:flex;gap:8px;align-items:flex-start;font-weight:500;font-size:13.5px;line-height:1.3}
+.wcard .e{font-size:22px;line-height:1}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:12px;border:1px solid var(--line);border-radius:14px;padding:2px 8px;color:var(--muted);cursor:pointer;user-select:none}
+.chip input{position:absolute;opacity:0;pointer-events:none}
+.chip.en:has(input:checked){background:var(--t-teal);border-color:var(--teal);color:var(--teal);font-weight:600}
+.chip.wk:has(input:checked){background:var(--t-orange);border-color:var(--orange);color:var(--orange);font-weight:600}
+/* chat */
+.chat{background:var(--t-blue);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+:root .chat{background:color-mix(in srgb,var(--bg) 60%,var(--t-blue))}
+.msg{display:flex;gap:8px;align-items:center;max-width:92%}
+.msg.r{align-self:flex-end;flex-direction:row-reverse}
+.av{width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:12px;display:grid;place-items:center;flex:none}
+.av.m{background:#7C5CFC}.av.s{background:#12A594}
+.bb{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 12px;font-size:14.5px}
+.msg.r .bb{background:var(--bubble-me);border-color:transparent}
+.hl{color:var(--orange);font-weight:700}
+.hb{font-weight:700}
+.audio{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.audio .lbl{font-weight:600;font-size:14px;min-width:160px}
+.audio audio{flex:1;min-width:220px;height:38px}
+.mine{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+@media(max-width:620px){.mine{grid-template-columns:repeat(2,1fr)}}
+.mine label{font-size:12px;color:var(--muted);font-style:italic}
+/* vocab */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:620px){.grid3{grid-template-columns:repeat(2,1fr)}}
+.vc{background:var(--t-purple);border-radius:12px;padding:8px 10px;display:flex;gap:10px;align-items:center}
+.vc .e{font-size:24px}
+.vc b{display:block;font-size:14.5px}
+.vc i{font-size:12px;color:var(--purple)}
+.vc .say{margin-left:auto}
+ol.sent{padding-left:0;list-style:none;margin:12px 0;counter-reset:s}
+ol.sent li{counter-increment:s;padding:6px 0 6px 32px;position:relative;border-bottom:1px dashed var(--line)}
+ol.sent li::before{content:counter(s);position:absolute;left:0;top:7px;width:22px;height:22px;border-radius:50%;background:#7C5CFC;color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+/* going to */
+.gt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:620px){.gt{grid-template-columns:1fr}}
+.gt h3{font-size:15px;color:var(--blue);margin-bottom:4px}
+.gt p{margin:2px 0;font-size:14px}
+.go{color:var(--blue);font-weight:700}
+.planner{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:620px){.planner{grid-template-columns:repeat(2,1fr)}}
+.day{background:var(--card);border:1.5px solid var(--blue);border-radius:12px;padding:8px}
+.day.nx{border-color:var(--orange)}
+.day b{color:var(--blue);font-size:13.5px}.day.nx b{color:var(--orange)}
+.day textarea{border:none;padding:4px 0;min-height:52px;background:transparent}
+/* listening */
+table.where{width:100%;border-collapse:collapse;font-size:14px}
+table.where th{color:var(--pink);font-weight:600;font-size:13px;padding:4px}
+table.where td{padding:6px 4px;text-align:center;border-top:1px solid var(--line)}
+table.where td:first-child{text-align:left;font-weight:500}
+table.where input{width:18px;height:18px;accent-color:#E8457A}
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px}
+@media(max-width:620px){.qs{grid-template-columns:1fr}}
+.q{display:flex;gap:10px;align-items:center;font-size:14px}
+.q select{width:62px;flex:none;padding:4px 6px}
+/* suggestions */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:620px){.two{grid-template-columns:1fr}}
+.two h3{font-size:15px;margin-bottom:6px}
+.two p{margin:3px 0;font-size:14px}
+.two p span{color:var(--muted);font-style:italic;font-size:13px}
+.pool{display:flex;flex-direction:column;gap:6px}
+.pool button{text-align:left;background:var(--card);border:1px dashed var(--green);border-radius:12px;padding:6px 12px;color:var(--ink);font-size:14px}
+.pool button:disabled{opacity:.3;text-decoration:line-through}
+.built{min-height:60px;background:color-mix(in srgb,var(--bg) 60%,var(--t-green));border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.built .bb{max-width:85%}
+.built .bb.r{align-self:flex-end;background:var(--bubble-me);border-color:transparent}
+.built .ph{color:var(--muted);font-style:italic;font-size:13px}
+.lbl2{font-weight:600;color:var(--navy);margin:14px 0 6px;font-size:15px}
+:root[data-theme="dark"] .lbl2{color:var(--ink)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .lbl2{color:var(--ink)}}
+.reveal{display:none;margin-top:8px;font-size:14px}
+.reveal.show{display:block}
+/* practice */
+.flow{display:flex;flex-direction:column;gap:6px}
+.st{display:flex;gap:8px;align-items:center;padding:6px 12px;border-radius:12px;font-size:14px;width:fit-content;max-width:100%}
+.st.a{background:var(--t-blue)}.st.b{background:var(--t-green);margin-left:clamp(20px,12vw,120px)}
+.st i{font-style:normal;width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;flex:none}
+.st.a i{background:#3B82F6}.st.b i{background:#22A559}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+@media(max-width:620px){.cards{grid-template-columns:1fr}}
+.rc{border:1.5px solid;border-radius:14px;padding:10px 12px;background:var(--card)}
+.rc .e{font-size:26px}.rc b{display:block}.rc p{margin:4px 0 0;font-size:13.5px}
+.sit{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:620px){.sit{grid-template-columns:1fr}}
+.sit div{background:var(--t-orange);border-radius:14px;padding:8px 12px;font-weight:500;font-size:14px}
+.sit div.pick{outline:2px solid var(--orange)}
+.prog label{display:flex;gap:8px;align-items:center;font-size:14px;padding:3px 0}
+.prog input{width:18px;height:18px;accent-color:#12A594}
+footer{margin-top:28px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:var(--muted);font-size:13px}
+
+/* pages */
+.pg{display:none}
+.pg.active{display:block;animation:pgin .25s ease}
+@keyframes pgin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.pg.active{animation:none}}
+.topmini[hidden]{display:none}
+.topmini{display:flex;justify-content:space-between;align-items:center;font-weight:600;color:var(--muted);font-size:13.5px;margin:4px 4px 0}
+.nav{position:sticky;bottom:0;z-index:5;margin-top:22px;padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.dots button{width:11px;height:11px;border-radius:50%;border:none;background:var(--line);padding:0}
+.dots button.on{background:var(--orange);transform:scale(1.25)}
+.nav .btn{min-width:96px}
+.nav .btn:disabled{opacity:.35;cursor:default}
+
+.wk{display:grid;grid-template-columns:90px 110px 1fr;gap:10px;align-items:center;padding:6px 0}
+@media(max-width:520px){.wk{grid-template-columns:1fr}}
+.rc2{background:var(--t-purple);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.rc2 .e{font-size:24px;letter-spacing:2px}
+.rc2 i{color:var(--purple);font-size:13px;min-height:2.6em}
+.ql{display:flex;flex-direction:column;gap:6px}
+.qrow{background:var(--t-blue);border-radius:14px;padding:6px 8px 6px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14.5px}
+.qrow .chips .chip.y:has(input:checked){background:var(--t-green);border-color:var(--green);color:var(--green);font-weight:600}
+.qrow .chips .chip.n:has(input:checked){background:var(--t-pink);border-color:var(--pink);color:var(--pink);font-weight:600}
+
+.chk label{display:flex;gap:8px;align-items:center;font-size:14.5px;padding:4px 0}
+.chk input{width:18px;height:18px;flex:none;accent-color:#12A594}
+.phone{max-width:460px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:12px}
+.phone .top{display:flex;align-items:center;gap:8px;padding:4px 4px 10px;border-bottom:1px solid var(--line);margin-bottom:10px;font-weight:600}
+.thread{display:flex;flex-direction:column;gap:8px}
+.in{align-self:flex-start;background:var(--t-purple);border-radius:16px 16px 16px 4px;padding:7px 12px;max-width:85%;font-size:14.5px}
+.out{align-self:flex-end;width:85%}
+.out textarea{min-height:40px;border-radius:16px 16px 4px 16px;background:var(--bubble-me);border-color:transparent}
+.hint{font-size:12px;color:var(--muted);font-style:italic;text-align:right;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="topmini" id="topmini" hidden><span>Homework: Plans</span><span id="pnum"></span></div>
+
+<div class="pg">
+<header class="hero">
+  <div><span class="tag">HOMEWORK</span><h1>This weekend I’m gonna …</h1><p>3 short tasks · about 5 minutes</p></div>
+  <div class="bubbles"><span class="bub">WYD Sunday?</span><span class="bub g">How about 9?</span></div>
+</header>
+<div class="legend"><span><span class="badge b-core">★ core</span> please do it &nbsp; <span class="badge b-opt">optional</span> if you want &nbsp; 🔊 tap to hear it</span><span>Your answers save on this device.</span></div>
+<section>
+  <div class="sh c-orange"><span class="n">1</span><h2>Voice message (20–40 sec)</h2></div>
+  <div class="sub"><span>Send it to your teacher on Saturday or Sunday.</span><span class="badge b-core">★ core</span></div>
+  <div class="tint to" style="font-size:15px">
+    <p style="margin:0 0 6px">“This weekend <span class="hl">I’m gonna</span> … Then <span class="hl">I’m gonna</span> … On Sunday … <span class="hl">Why don’t we</span> … next lesson?” <button class="say" data-say="This weekend I'm gonna relax. Then I'm gonna play CS2 with my friends. On Sunday I'm gonna have dinner with Anna. Why don't we talk about games next lesson?" aria-label="Listen to an example">🔊</button></p>
+  </div>
+  <div class="panel chk" style="margin-top:10px"><b>Check before you send:</b>
+    <label><input type="checkbox" data-save="c1">3 plans with going to / gonna</label>
+    <label><input type="checkbox" data-save="c2">1 suggestion: How about …? / Why don’t we …? / Let’s …</label>
+    <label><input type="checkbox" data-save="c3">1 word from the list: appointment, book, pack, trip, wedding, show, ride, bill, I don’t mind</label>
+    <label><input type="checkbox" data-save="c4">Sent! 🎉</label>
+  </div>
+</section>
+</div>
+
+<section class="pg">
+  <div class="sh c-green"><span class="n">2</span><h2>Plan it by text</h2></div>
+  <div class="sub"><span>Max texts you. Write your replies. Use a suggestion + an acronym (WYD, TBH, NP, CU, ASAP …).</span><span class="badge b-core">★ core</span></div>
+  <div class="phone">
+    <div class="top"><span class="av m">M</span>Max <span style="color:var(--green);font-size:12px;font-weight:500">online</span></div>
+    <div class="thread">
+      <div class="in">Hey! WYD this weekend?</div>
+      <div class="out"><textarea data-save="m1" placeholder="I’m gonna …"></textarea></div>
+      <div class="in">Cool. Wanna meet on Sunday?</div>
+      <div class="out"><textarea data-save="m2" placeholder="Sure! Where?"></textarea><div class="hint">say yes</div></div>
+      <div class="in">IDK. You choose 😅</div>
+      <div class="out"><textarea data-save="m3" placeholder="How about …?"></textarea><div class="hint">suggest a place</div></div>
+      <div class="in">OK! What time?</div>
+      <div class="out"><textarea data-save="m4" placeholder="How about …?"></textarea><div class="hint">suggest a time</div></div>
+      <div class="in">Hmm, that’s a bit early. I’m gonna stay up late on Saturday 😴</div>
+      <div class="out"><textarea data-save="m5" placeholder="NP. How about …?"></textarea><div class="hint">suggest a new time</div></div>
+      <div class="in">Perfect! CU there 👋</div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:12px;justify-content:center"><button class="btn" id="copy">Copy my chat to send</button><span class="result" id="copied"></span></div>
+  <textarea id="copybox" hidden readonly style="margin-top:8px"></textarea>
+</section>
+
+<section class="pg">
+  <div class="sh c-purple"><span class="n">3</span><h2>Ask the AI</h2></div>
+  <div class="sub"><span>Ask an AI one question in English about your weekend. Then answer with a suggestion.</span><span class="badge b-opt">optional</span></div>
+  <div class="tint tp" style="font-size:14.5px">
+    <p style="margin:0 0 6px"><b>Example:</b> “I’m free this weekend. I want to have a good time with my fiancée. What do you suggest?”</p>
+    <p style="margin:0;color:var(--muted);font-style:italic;font-size:13.5px">Then choose one idea and say: “TBH, I prefer … Why don’t we …?”</p>
+  </div>
+  <div class="lbl2">My question</div><textarea data-save="ai1"></textarea>
+  <div class="lbl2">The AI’s best idea</div><textarea data-save="ai2"></textarea>
+  <div class="lbl2">My answer</div><textarea data-save="ai3" placeholder="TBH, I prefer … Why don’t we …?"></textarea>
+</section>
+
+<nav class="nav" aria-label="Pages"><button class="btn ghost" id="prev">Back</button><div class="dots" id="dots"></div><button class="btn" id="next">Next</button></nav>
+<footer><span>Homework: Plans</span><button class="btn ghost" id="clearAll">Clear my answers</button></footer>
+</div>
+<script>
+(function(){
+var KEY="plans_hw_v1",store={};
+try{store=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){store={};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
+var voice=null;
+function pickVoice(){try{var vs=speechSynthesis.getVoices();voice=vs.find(function(v){return v.lang==="en-US"&&/Samantha|Google US|Aria|Jenny|Alex/i.test(v.name);})||vs.find(function(v){return v.lang==="en-US";})||null;}catch(e){}}
+if("speechSynthesis" in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function say(t){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="en-US";u.rate=0.9;if(voice)u.voice=voice;speechSynthesis.speak(u);}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-say]");if(b)say(b.getAttribute("data-say"));});
+
+
+document.addEventListener("change",function(e){var t=e.target;if(t.type==="radio"&&t.name){document.querySelectorAll('input[name="'+t.name+'"]').forEach(function(x){store[x.getAttribute("data-save")]=x.checked;});save();}});
+
+document.querySelectorAll("[data-save]").forEach(function(el){var k=el.getAttribute("data-save");
+  if(k in store){if(el.type==="checkbox"||el.type==="radio")el.checked=!!store[k];else el.value=store[k];}
+  if(el.type==="checkbox")el.addEventListener("change",function(){store[k]=el.checked;save();});else if(el.type!=="radio")el.addEventListener("input",function(){store[k]=el.value;save();});});
+
+var pages=[].slice.call(document.querySelectorAll(".pg")),cur=0;
+try{cur=parseInt(localStorage.getItem(KEY+"_page")||"0",10)||0;}catch(e){}
+if(cur>=pages.length)cur=0;
+var dots=document.getElementById("dots");
+pages.forEach(function(p,i){var b=document.createElement("button");b.setAttribute("aria-label","Page "+(i+1));b.onclick=function(){go(i);};dots.appendChild(b);});
+function go(i){if("speechSynthesis" in window)speechSynthesis.cancel();
+  cur=Math.max(0,Math.min(pages.length-1,i));
+  pages.forEach(function(p,j){p.classList.toggle("active",j===cur);});
+  [].forEach.call(dots.children,function(d,j){d.classList.toggle("on",j===cur);});
+  document.getElementById("prev").disabled=cur===0;
+  var nx=document.getElementById("next");nx.textContent=cur===pages.length-1?"Done 🏆":"Next";nx.disabled=cur===pages.length-1;
+  document.getElementById("topmini").hidden=cur===0;document.getElementById("pnum").textContent=(cur+1)+" / "+pages.length;
+  try{localStorage.setItem(KEY+"_page",String(cur));}catch(e){}
+  window.scrollTo(0,0);}
+document.getElementById("prev").onclick=function(){go(cur-1);};
+document.getElementById("next").onclick=function(){go(cur+1);};
+document.addEventListener("keydown",function(e){if(/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;if(e.key==="ArrowRight")go(cur+1);if(e.key==="ArrowLeft")go(cur-1);});
+go(cur);
+var maxL=["Hey! WYD this weekend?","Cool. Wanna meet on Sunday?","IDK. You choose 😅","OK! What time?","Hmm, that’s a bit early. I’m gonna stay up late on Saturday 😴"];
+document.getElementById("copy").onclick=function(){
+  var out="";for(var i=0;i<5;i++){out+="Max: "+maxL[i]+"\nMe: "+(document.querySelector('[data-save="m'+(i+1)+'"]').value.trim()||"…")+"\n";}
+  out+="Max: Perfect! CU there 👋";
+  var msg=document.getElementById("copied");
+  function fallback(){var b=document.getElementById("copybox");b.hidden=false;b.value=out;b.style.minHeight="180px";b.focus();b.select();msg.textContent="Select the text and copy it.";}
+  try{navigator.clipboard.writeText(out).then(function(){msg.textContent="Copied! Paste it in a message to your teacher.";msg.className="result good";},fallback);}catch(e){fallback();}
+};
+document.getElementById("clearAll").onclick=function(){if(confirm("Clear all your answers on this page?")){store={};save();try{localStorage.removeItem(KEY+"_page");}catch(e){}location.reload();}};
+})();
+</script>
+</body>
+</html>
