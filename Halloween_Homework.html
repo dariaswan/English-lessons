@@ -60,4 +60,18 @@ document.querySelectorAll("section .check button").forEach((btn,si)=>{btn.onclic
  if(s.length===4){const t=s.reduce((a,b)=>[a[0]+b[0],a[1]+b[1]],[0,0]);document.getElementById("total").textContent="Total: "+t[0]+" / "+t[1]+(t[0]===t[1]?" — Perfect! Max is proud of you 🍫":" — Great work!");}
 }});
 
-</script></body></html>
+</script><style>
+.spd{display:flex;gap:6px;align-items:center;margin-top:6px;font:600 12px Poppins,Arial,sans-serif;color:#5b6280}
+.spd button{font:600 12px Poppins,Arial,sans-serif;border:1.5px solid #f5821f;background:#fff;color:#1d2540;border-radius:14px;padding:2px 10px;cursor:pointer}
+.spd button.on{background:#f5821f;color:#fff}
+@media print{.spd{display:none}}
+</style>
+<script>
+document.querySelectorAll("audio").forEach(a=>{
+  const bar=document.createElement("div");bar.className="spd";bar.innerHTML="🐢 Speed:";
+  [0.5,0.75,1,1.25].forEach(r=>{const b=document.createElement("button");b.textContent=r+"×";if(r===1)b.classList.add("on");
+    b.onclick=()=>{a.playbackRate=r;a.preservesPitch=true;bar.querySelectorAll("button").forEach(x=>x.classList.remove("on"));b.classList.add("on");};bar.appendChild(b);});
+  const host=a.closest(".player")||a;host.insertAdjacentElement("afterend",bar);
+});
+</script>
+</body></html>
