@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учим английский: Спорт и Время</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #fff9e6 100%);
+            min-height: 100vh; margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+            user-select: none; overflow-x: hidden;
+        }
+        h1 { color: #2c3e50; margin: 0 0 10px 0; text-align: center; font-size: 1.8rem; }
+        .menu { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; width: 100%; max-width: 400px; }
+        .menu-btn {
+            padding: 20px; font-size: 1.3rem; font-weight: bold; color: white;
+            border: none; border-radius: 15px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); }
+        .menu-btn:active { transform: translateY(0); }
+        .btn-match { background: linear-gradient(135deg, #4a90e2, #357abd); }
+        .btn-quiz { background: linear-gradient(135deg, #ff6b6b, #e55050); }
+        .btn-scramble { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .btn-speedrun { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 900px; margin-bottom: 15px; gap: 10px;
+        }
+        .back-btn {
+            padding: 8px 16px; background: #555; color: white;
+            border: none; border-radius: 8px; cursor: pointer; font-size: 0.9rem;
+        }
+        .back-btn:hover { background: #333; }
+        .score-board { font-size: 1.1rem; font-weight: bold; color: #2c3e50; }
+        .instruction { color: #666; margin-bottom: 15px; text-align: center; font-size: 0.95rem; }
+        .screen { display: none; width: 100%; max-width: 900px; flex-direction: column; align-items: center; }
+        .screen.active { display: flex; }
+        .game-container { display: flex; justify-content: center; gap: 30px; width: 100%; }
+        .column { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+        .card {
+            background: white; border: 3px solid #ddd; border-radius: 12px;
+            padding: 12px; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-align: center; min-height: 50px;
+        }
+        .card:hover { border-color: #4a90e2; transform: translateY(-2px); }
+        .card.selected { border-color: #ff6b6b; background-color: #fff0f0; }
+        .card.correct { border-color: #28a745; background-color: #d4edda; color: #155724; pointer-events: none; opacity: 0.6; }
+        .card.wrong { border-color: #dc3545; background-color: #f8d7da; animation: shake 0.4s; }
+        .right-card { flex-direction: column; gap: 3px; }
+        .right-card .emoji { font-size: 2rem; line-height: 1; }
+        .right-card .ru-text { font-size: 0.85rem; color: #555; }
+        .quiz-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); text-align: center;
+            width: 100%; max-width: 500px; margin-bottom: 20px;
+        }
+        .quiz-emoji { font-size: 5rem; line-height: 1; margin-bottom: 10px; }
+        .quiz-ru { font-size: 1.4rem; color: #555; font-weight: bold; margin-bottom: 20px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 500px; }
+        .quiz-option {
+            padding: 15px; background: white; border: 3px solid #ddd;
+            border-radius: 12px; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .quiz-option:hover { border-color: #4a90e2; background: #f0f8ff; }
+        .quiz-option.correct { border-color: #28a745; background: #d4edda; color: #155724; pointer-events: none; }
+        .quiz-option.wrong { border-color: #dc3545; background: #f8d7da; animation: shake 0.4s; }
+        .scramble-card {
+            background: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); text-align: center;
+            width: 100%; max-width: 600px;
+        }
+        .scramble-emoji { font-size: 4rem; line-height: 1; margin-bottom: 5px; }
+        .scramble-ru { font-size: 1.2rem; color: #555; font-weight: bold; margin-bottom: 20px; }
+        .answer-area {
+            min-height: 60px; background: #f0f8ff; border: 3px dashed #4a90e2;
+            border-radius: 12px; margin-bottom: 20px; padding: 10px;
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center;
+        }
+        .answer-tile {
+            background: #4a90e2; color: white; padding: 10px 15px;
+            border-radius: 8px; font-size: 1.2rem; font-weight: bold;
+            cursor: pointer; transition: transform 0.15s; min-width: 35px; text-align: center;
+        }
+        .answer-tile:hover { transform: scale(1.1); background: #ff6b6b; }
+        .letters-pool { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px; }
+        .letter-tile {
+            background: white; border: 3px solid #4a90e2; color: #2c3e50;
+            padding: 10px 15px; border-radius: 8px; font-size: 1.2rem;
+            font-weight: bold; cursor: pointer; transition: transform 0.15s;
+            min-width: 35px; text-align: center;
+        }
+        .letter-tile:hover { transform: scale(1.1); background: #e0f7fa; }
+        .scramble-btn {
+            padding: 12px 30px; background: #28a745; color: white;
+            border: none; border-radius: 10px; font-size: 1.1rem;
+            font-weight: bold; cursor: pointer; margin: 0 5px;
+        }
+        .scramble-btn:hover { background: #1e7e34; }
+        .scramble-btn.secondary { background: #ff6b6b; }
+        .scramble-btn.secondary:hover { background: #e55050; }
+        .scramble-feedback { margin-top: 15px; font-size: 1.1rem; font-weight: bold; min-height: 25px; }
+
+        /* ===== СПИДРАН ===== */
+        .speedrun-header {
+            display: flex; justify-content: space-between;
+            width: 100%; max-width: 600px; margin-bottom: 10px;
+            font-size: 1.1rem; font-weight: bold;
+        }
+        .time-display {
+            background: #2c3e50; color: #fff; padding: 8px 16px;
+            border-radius: 20px; font-size: 1.2rem; min-width: 90px;
+            text-align: center; transition: background 0.3s;
+        }
+        .time-display.low { background: #dc3545; animation: pulse-red 0.5s infinite; }
+        .combo-display {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white; padding: 8px 16px; border-radius: 20px;
+            font-size: 1.2rem; min-width: 90px; text-align: center;
+            opacity: 0; transition: opacity 0.3s, transform 0.2s;
+        }
+        .combo-display.active { opacity: 1; transform: scale(1.1); }
+        .timer-bar-container {
+            width: 100%; max-width: 600px; height: 12px;
+            background: #ddd; border-radius: 6px; overflow: hidden; margin-bottom: 20px;
+        }
+        .timer-bar {
+            height: 100%; background: linear-gradient(90deg, #28a745, #f39c12, #dc3545);
+            width: 100%; transition: width 0.1s linear;
+        }
+        .speedrun-card {
+            background: white; border-radius: 20px; padding: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15); text-align: center;
+            width: 100%; max-width: 600px; position: relative; transition: transform 0.1s;
+        }
+        .speedrun-card.shake-wrong { animation: shake 0.3s; }
+        .speedrun-emoji { font-size: 4rem; line-height: 1; margin-bottom: 5px; }
+        .speedrun-ru { font-size: 1.3rem; color: #555; font-weight: bold; margin-bottom: 20px; }
+        .speedrun-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+        .speedrun-option {
+            padding: 18px 12px; background: #f8f9fa; border: 3px solid #ddd;
+            border-radius: 12px; font-size: 1.1rem; font-weight: bold;
+            cursor: pointer; transition: all 0.15s; color: #2c3e50;
+            text-align: center; user-select: none;
+        }
+        .speedrun-option:hover { border-color: #f39c12; background: #fff8e1; transform: scale(1.03); }
+        .speedrun-option.correct { border-color: #28a745; background: #d4edda; color: #155724; }
+        .speedrun-option.wrong { border-color: #dc3545; background: #f8d7da; color: #721c24; }
+        .float-score {
+            position: absolute; font-size: 1.8rem; font-weight: bold;
+            color: #28a745; pointer-events: none;
+            animation: float-up 1s ease-out forwards; z-index: 100;
+        }
+        .float-score.bad { color: #dc3545; }
+        @keyframes float-up {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+        @keyframes pulse-red {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .gameover-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1000; padding: 20px;
+        }
+        .gameover-modal.active { display: flex; }
+        .gameover-content {
+            background: white; border-radius: 20px; padding: 30px;
+            text-align: center; max-width: 400px; width: 100%;
+            animation: pop-in 0.4s;
+        }
+        @keyframes pop-in {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .gameover-title { font-size: 2rem; margin-bottom: 10px; }
+        .gameover-score { font-size: 2.5rem; font-weight: bold; color: #f39c12; margin: 15px 0; }
+        .gameover-record { font-size: 1rem; color: #28a745; font-weight: bold; min-height: 25px; margin-bottom: 15px; }
+        .gameover-btn {
+            padding: 12px 30px; background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; margin: 5px;
+        }
+        .gameover-btn:hover { transform: scale(1.05); }
+        .restart-btn {
+            margin-top: 20px; padding: 10px 25px; background: #4a90e2;
+            color: white; border: none; border-radius: 8px;
+            font-size: 1rem; cursor: pointer; display: none;
+        }
+        .restart-btn:hover { background: #357abd; }
+        .restart-btn.visible { display: block; }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.4rem; }
+            .game-container { flex-direction: column; gap: 15px; }
+            .card { font-size: 0.9rem; padding: 10px; }
+            .quiz-emoji { font-size: 4rem; }
+            .quiz-ru { font-size: 1.1rem; }
+            .scramble-emoji { font-size: 3rem; }
+            .speedrun-emoji { font-size: 3rem; }
+            .speedrun-options { grid-template-columns: 1fr; }
+            .speedrun-option { padding: 14px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🇬🇧 Учим английский: Спорт и Время</h1>
+
+    <div id="menuScreen" class="screen active">
+        <div class="menu">
+            <button class="menu-btn btn-match" onclick="startMatch()">🎯 Найди пару</button>
+            <button class="menu-btn btn-quiz" onclick="startQuiz()">❓ Квиз</button>
+            <button class="menu-btn btn-scramble" onclick="startScramble()">🔀 Скрембл</button>
+            <button class="menu-btn btn-speedrun" onclick="startSpeedrun()">⚡ Спидран (на время!)</button>
+        </div>
+        <p class="instruction" style="margin-top: 30px;">💡 Во всех играх есть кнопка 🔊 для прослушивания слова</p>
+    </div>
+
+    <div id="matchScreen" class="screen">
+        <div class="top-bar">
+            <button class="back-btn" onclick="goHome()">← Меню</button>
+            <div class="score-board">Найдено: <span id="matchScore">0</span> / 13</div>
+        </div>
+        <p class="instruction">Нажми на английское слово, затем на картинку с переводом</p>
+        <div class="game-container">
+            <div class="column" id="leftColumn"></div>
+            <div class="column" id="rightColumn"></div>
+        </div>
+        <button class="restart-btn" id="matchRestart" onclick="startMatch()">Играть снова</button>
+    </div>
+
+    <div id="quizScreen" class="screen">
+        <div class="top-bar">
+            <button class="back-btn" onclick="goHome()">← Меню</button>
+            <div class="score-board">Счет: <span id="quizScore">0</span></div>
+        </div>
+        <p class="instruction">Какое английское слово подходит к этой картинке?</p>
+        <div class="quiz-card">
+            <div class="quiz-emoji" id="quizEmoji">🕰️</div>
+            <div class="quiz-ru" id="quizRu">свободное время</div>
+        </div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <button class="restart-btn" id="quizRestart" onclick="startQuiz()">Играть снова</button>
+    </div>
+
+    <div id="scrambleScreen" class="screen">
+        <div class="top-bar">
+            <button class="back-btn" onclick="goHome()">← Меню</button>
+            <div class="score-board">Счет: <span id="scrambleScore">0</span></div>
+        </div>
+        <p class="instruction">Собери английское слово из букв</p>
+        <div class="scramble-card">
+            <div class="scramble-emoji" id="scrambleEmoji">🕰️</div>
+            <div class="scramble-ru" id="scrambleRu">свободное время</div>
+            <div class="answer-area" id="answerArea"></div>
+            <div class="letters-pool" id="lettersPool"></div>
+            <button class="scramble-btn" onclick="checkScramble()">✓ Проверить</button>
+            <button class="scramble-btn secondary" onclick="clearAnswer()">↺ Очистить</button>
+            <button class="scramble-btn" onclick="speakCurrentScramble()" style="background:#ffd700;color:#333;">🔊 Слушать</button>
+            <div class="scramble-feedback" id="scrambleFeedback"></div>
+        </div>
+        <button class="restart-btn" id="scrambleRestart" onclick="startScramble()">Играть снова</button>
+    </div>
+
+    <div id="speedrunScreen" class="screen">
+        <div class="top-bar">
+            <button class="back-btn" onclick="goHome()">← Меню</button>
+            <div class="score-board">Рекорд: <span id="speedrunBest">0</span></div>
+        </div>
+        <div class="speedrun-header">
+            <div class="time-display" id="timeDisplay">⏱ 30.0</div>
+            <div class="combo-display" id="comboDisplay">🔥 ×2</div>
+        </div>
+        <div class="timer-bar-container">
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+        <div class="speedrun-card" id="speedrunCard">
+            <div class="speedrun-emoji" id="speedrunEmoji">🕰️</div>
+            <div class="speedrun-ru" id="speedrunRu">свободное время</div>
+            <div class="speedrun-options" id="speedrunOptions"></div>
+        </div>
+    </div>
+
+    <div class="gameover-modal" id="speedrunModal">
+        <div class="gameover-content">
+            <div class="gameover-title">⏰ Время вышло!</div>
+            <div class="gameover-score" id="finalScore">0</div>
+            <div class="gameover-record" id="recordMsg"></div>
+            <button class="gameover-btn" onclick="startSpeedrun()">🔁 Еще раз</button>
+            <button class="gameover-btn" onclick="exitSpeedrun()" style="background:#555;">← Меню</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== ДАННЫЕ =====
+        const wordsData = [
+            { id: 1, en: "free time", ru: "свободное время", emoji: "🕰️" },
+            { id: 2, en: "badminton", ru: "бадминтон", emoji: "🏸" },
+            { id: 3, en: "baseball", ru: "бейсбол", emoji: "⚾" },
+            { id: 4, en: "hockey", ru: "хоккей", emoji: "🏒" },
+            { id: 5, en: "table tennis", ru: "настольный теннис", emoji: "🏓" },
+            { id: 6, en: "tennis", ru: "теннис", emoji: "🎾" },
+            { id: 7, en: "volleyball", ru: "волейбол", emoji: "🏐" },
+            { id: 8, en: "once", ru: "один раз", emoji: "1️⃣" },
+            { id: 9, en: "twice", ru: "два раза", emoji: "2️⃣" },
+            { id: 10, en: "three times", ru: "три раза", emoji: "3️⃣" },
+            { id: 11, en: "week", ru: "неделя", emoji: "📅" },
+            { id: 12, en: "month", ru: "месяц", emoji: "🗓️" },
+            { id: 13, en: "year", ru: "год", emoji: "🎉" }
+        ];
+
+        function speak(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1.1;
+            window.speechSynthesis.speak(u);
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        // ГЛАВНОЕ МЕНЮ - просто переключает экран, НЕ трогает таймеры
+        function goHome() {
+            window.speechSynthesis.cancel();
+            showScreen('menuScreen');
+            // Останавливаем таймер спидранa, если он есть
+            if (window.speedrunState) {
+                window.speedrunState.active = false;
+                if (window.speedrunState.interval) {
+                    clearInterval(window.speedrunState.interval);
+                    window.speedrunState.interval = null;
+                }
+            }
+            document.getElementById('speedrunModal').classList.remove('active');
+        }
+
+        // ============================================
+        // ИГРА 1: НАЙДИ ПАРУ
+        // ============================================
+        let matchSelectedLeft = null;
+        let matchCount = 0;
+
+        function startMatch() {
+            goHome();
+            showScreen('matchScreen');
+            const leftCol = document.getElementById('leftColumn');
+            const rightCol = document.getElementById('rightColumn');
+            leftCol.innerHTML = ''; rightCol.innerHTML = '';
+            matchSelectedLeft = null; matchCount = 0;
+            document.getElementById('matchScore').textContent = '0';
+            document.getElementById('matchRestart').classList.remove('visible');
+            shuffle(wordsData).forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = item.id;
+                card.innerHTML = `<span>${item.en}</span>`;
+                card.addEventListener('click', () => selectMatchLeft(card, item.en));
+                leftCol.appendChild(card);
+            });
+            shuffle(wordsData).forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card right-card';
+                card.dataset.id = item.id;
+                card.innerHTML = `<div class="emoji">${item.emoji}</div><div class="ru-text">${item.ru}</div>`;
+                card.addEventListener('click', () => selectMatchRight(card, item.en));
+                rightCol.appendChild(card);
+            });
+        }
+
+        function selectMatchLeft(card, word) {
+            if (card.classList.contains('correct')) return;
+            if (matchSelectedLeft) matchSelectedLeft.classList.remove('selected');
+            if (matchSelectedLeft === card) { matchSelectedLeft = null; return; }
+            matchSelectedLeft = card;
+            card.classList.add('selected');
+            speak(word);
+        }
+
+        function selectMatchRight(card, word) {
+            if (!matchSelectedLeft || card.classList.contains('correct')) return;
+            if (matchSelectedLeft.dataset.id === card.dataset.id) {
+                matchSelectedLeft.classList.remove('selected');
+                matchSelectedLeft.classList.add('correct');
+                card.classList.add('correct');
+                matchSelectedLeft = null;
+                matchCount++;
+                document.getElementById('matchScore').textContent = matchCount;
+                speak(word);
+                if (matchCount === wordsData.length) {
+                    document.getElementById('matchRestart').classList.add('visible');
+                }
+            } else {
+                card.classList.add('wrong');
+                setTimeout(() => card.classList.remove('wrong'), 500);
+                if (matchSelectedLeft) matchSelectedLeft.classList.remove('selected');
+                matchSelectedLeft = null;
+            }
+        }
+
+        // ============================================
+        // ИГРА 2: КВИЗ
+        // ============================================
+        let quizQueue = [];
+        let quizScore = 0;
+        let quizLocked = false;
+
+        function startQuiz() {
+            goHome();
+            showScreen('quizScreen');
+            quizQueue = shuffle(wordsData);
+            quizScore = 0;
+            document.getElementById('quizScore').textContent = '0';
+            document.getElementById('quizRestart').classList.remove('visible');
+            nextQuizQuestion();
+        }
+
+        function nextQuizQuestion() {
+            if (quizQueue.length === 0) {
+                document.getElementById('quizOptions').innerHTML = '<p style="text-align:center;font-size:1.2rem;color:#28a745;font-weight:bold;">🎉 Все вопросы пройдены! Молодец!</p>';
+                document.getElementById('quizRestart').classList.add('visible');
+                return;
+            }
+            quizLocked = false;
+            const correct = quizQueue[0];
+            document.getElementById('quizEmoji').textContent = correct.emoji;
+            document.getElementById('quizRu').textContent = correct.ru;
+            const wrong = shuffle(wordsData.filter(w => w.id !== correct.id)).slice(0, 3);
+            const options = shuffle([correct, ...wrong]);
+            const optionsEl = document.getElementById('quizOptions');
+            optionsEl.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'quiz-option';
+                btn.innerHTML = `<span>${opt.en}</span><span style="font-size:1.2rem;">🔊</span>`;
+                btn.addEventListener('click', (e) => {
+                    if (quizLocked) return;
+                    if (e.target.textContent === '🔊') { speak(opt.en); return; }
+                    handleQuizAnswer(btn, opt, correct);
+                });
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function handleQuizAnswer(btn, chosen, correct) {
+            quizLocked = true;
+            if (chosen.id === correct.id) {
+                btn.classList.add('correct');
+                speak(correct.en);
+                quizScore++;
+                document.getElementById('quizScore').textContent = quizScore;
+                setTimeout(() => { quizQueue.shift(); nextQuizQuestion(); }, 1200);
+            } else {
+                btn.classList.add('wrong');
+                speak(correct.en);
+                document.querySelectorAll('.quiz-option').forEach(el => {
+                    if (el.querySelector('span').textContent === correct.en) el.classList.add('correct');
+                });
+                setTimeout(() => { quizQueue.shift(); nextQuizQuestion(); }, 2000);
+            }
+        }
+
+        // ============================================
+        // ИГРА 3: СКРЕМБЛ
+        // ============================================
+        let scrambleQueue = [];
+        let currentScramble = null;
+        let answerLetters = [];
+        let poolLetters = [];
+        let scrambleScore = 0;
+
+        function startScramble() {
+            goHome();
+            showScreen('scrambleScreen');
+            scrambleQueue = shuffle(wordsData);
+            scrambleScore = 0;
+            document.getElementById('scrambleScore').textContent = '0';
+            document.getElementById('scrambleRestart').classList.remove('visible');
+            nextScramble();
+        }
+
+        function nextScramble() {
+            if (scrambleQueue.length === 0) {
+                document.getElementById('scrambleFeedback').textContent = '🎉 Все слова собраны! Молодец!';
+                document.getElementById('scrambleFeedback').style.color = '#28a745';
+                document.getElementById('scrambleRestart').classList.add('visible');
+                return;
+            }
+            currentScramble = scrambleQueue[0];
+            document.getElementById('scrambleEmoji').textContent = currentScramble.emoji;
+            document.getElementById('scrambleRu').textContent = currentScramble.ru;
+            document.getElementById('scrambleFeedback').textContent = '';
+            const cleanWord = currentScramble.en.replace(/\s/g, '');
+            poolLetters = cleanWord.split('').map((ch, i) => ({ char: ch, id: i }));
+            answerLetters = [];
+            renderScramble();
+        }
+
+        function renderScramble() {
+            const answerArea = document.getElementById('answerArea');
+            const lettersPool = document.getElementById('lettersPool');
+            answerArea.innerHTML = ''; lettersPool.innerHTML = '';
+            answerLetters.forEach((letter, idx) => {
+                const tile = document.createElement('div');
+                tile.className = 'answer-tile';
+                tile.textContent = letter.char;
+                tile.addEventListener('click', () => {
+                    answerLetters.splice(idx, 1);
+                    poolLetters.push(letter);
+                    renderScramble();
+                });
+                answerArea.appendChild(tile);
+            });
+            shuffle(poolLetters).forEach(letter => {
+                const tile = document.createElement('div');
+                tile.className = 'letter-tile';
+                tile.textContent = letter.char;
+                tile.addEventListener('click', () => {
+                    const poolIdx = poolLetters.findIndex(l => l.id === letter.id);
+                    if (poolIdx > -1) {
+                        answerLetters.push(poolLetters[poolIdx]);
+                        poolLetters.splice(poolIdx, 1);
+                        renderScramble();
+                    }
+                });
+                lettersPool.appendChild(tile);
+            });
+        }
+
+        function clearAnswer() {
+            poolLetters = poolLetters.concat(answerLetters);
+            answerLetters = [];
+            renderScramble();
+            document.getElementById('scrambleFeedback').textContent = '';
+        }
+
+        function speakCurrentScramble() {
+            if (currentScramble) speak(currentScramble.en);
+        }
+
+        function checkScramble() {
+            const feedback = document.getElementById('scrambleFeedback');
+            if (answerLetters.length === 0) return;
+            const userAnswer = answerLetters.map(l => l.char).join('');
+            const correct = currentScramble.en.replace(/\s/g, '');
+            if (userAnswer.toLowerCase() === correct.toLowerCase()) {
+                feedback.textContent = '✅ Правильно! Молодец!';
+                feedback.style.color = '#28a745';
+                speak(currentScramble.en);
+                scrambleScore++;
+                document.getElementById('scrambleScore').textContent = scrambleScore;
+                setTimeout(() => { scrambleQueue.shift(); nextScramble(); }, 1500);
+            } else {
+                feedback.textContent = '❌ Пока неверно. Попробуй еще раз!';
+                feedback.style.color = '#dc3545';
+            }
+        }
+
+        // ============================================
+        // ИГРА 4: СПИДРАН — ПЕРЕПИСАНО С НУЛЯ
+        // ============================================
+        // Глобальное состояние, чтобы goHome мог его видеть
+        window.speedrunState = {
+            time: 30,
+            score: 0,
+            combo: 0,
+            active: false,
+            locked: false,
+            interval: null,
+            currentCorrect: null,
+            best: parseInt(localStorage.getItem('speedrunBest') || '0')
+        };
+
+        function startSpeedrun() {
+            // Сначала прячем модалку и показываем экран
+            document.getElementById('speedrunModal').classList.remove('active');
+            showScreen('speedrunScreen');
+
+            // Останавливаем старый таймер
+            if (window.speedrunState.interval) {
+                clearInterval(window.speedrunState.interval);
+                window.speedrunState.interval = null;
+            }
+
+            // Сброс
+            const st = window.speedrunState;
+            st.time = 30;
+            st.score = 0;
+            st.combo = 0;
+            st.active = true;
+            st.locked = false;
+            st.currentCorrect = null;
+
+            document.getElementById('speedrunBest').textContent = st.best;
+            updateSpeedrunUI();
+
+            // Первый вопрос
+            nextSpeedrunQuestion();
+
+            // Запускаем таймер через 50мс, чтобы первый вопрос успел отрисоваться
+            setTimeout(() => {
+                st.interval = setInterval(speedrunTick, 100);
+            }, 50);
+        }
+
+        function speedrunTick() {
+            const st = window.speedrunState;
+            if (!st.active) return;
+            st.time -= 0.1;
+            if (st.time <= 0) {
+                st.time = 0;
+                updateSpeedrunUI();
+                endSpeedrun();
+                return;
+            }
+            updateSpeedrunUI();
+        }
+
+        function updateSpeedrunUI() {
+            const st = window.speedrunState;
+            const timeEl = document.getElementById('timeDisplay');
+            if (!timeEl) return;
+            timeEl.textContent = `⏱ ${st.time.toFixed(1)}`;
+            timeEl.classList.toggle('low', st.time <= 10);
+
+            const bar = document.getElementById('timerBar');
+            if (bar) bar.style.width = Math.max(0, (st.time / 30) * 100) + '%';
+
+            const comboEl = document.getElementById('comboDisplay');
+            if (comboEl) {
+                if (st.combo >= 2) {
+                    comboEl.textContent = `🔥 ×${st.combo}`;
+                    comboEl.classList.add('active');
+                } else {
+                    comboEl.classList.remove('active');
+                }
+            }
+        }
+
+        function nextSpeedrunQuestion() {
+            const st = window.speedrunState;
+            if (!st.active || st.time <= 0) return;
+            st.locked = false;
+
+            const correct = wordsData[Math.floor(Math.random() * wordsData.length)];
+            st.currentCorrect = correct;
+
+            document.getElementById('speedrunEmoji').textContent = correct.emoji;
+            document.getElementById('speedrunRu').textContent = correct.ru;
+
+            const wrong = shuffle(wordsData.filter(w => w.id !== correct.id)).slice(0, 3);
+            const options = shuffle([correct, ...wrong]);
+            const optionsEl = document.getElementById('speedrunOptions');
+            optionsEl.innerHTML = '';
+
+            options.forEach(opt => {
+                const div = document.createElement('div');
+                div.className = 'speedrun-option';
+                div.textContent = opt.en;
+                div.dataset.id = opt.id;
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    handleSpeedrunAnswer(div, opt, correct);
+                });
+                optionsEl.appendChild(div);
+            });
+        }
+
+        function handleSpeedrunAnswer(btn, chosen, correct) {
+            const st = window.speedrunState;
+            if (st.locked || !st.active || st.time <= 0) return;
+            st.locked = true;
+
+            if (chosen.id === correct.id) {
+                btn.classList.add('correct');
+                st.combo++;
+                const points = st.combo;
+                st.score += points;
+                st.time = Math.min(30, st.time + 1);
+                speak(correct.en);
+                showFloatScore(`+${points}`, btn, false);
+                updateSpeedrunUI();
+                setTimeout(() => {
+                    if (st.active && st.time > 0) nextSpeedrunQuestion();
+                }, 250);
+            } else {
+                btn.classList.add('wrong');
+                document.getElementById('speedrunCard').classList.add('shake-wrong');
+                setTimeout(() => document.getElementById('speedrunCard').classList.remove('shake-wrong'), 300);
+                st.time = Math.max(0, st.time - 2);
+                st.combo = 0;
+                showFloatScore('-2', btn, true);
+                document.querySelectorAll('.speedrun-option').forEach(el => {
+                    if (el.textContent === correct.en) el.classList.add('correct');
+                });
+                updateSpeedrunUI();
+                setTimeout(() => {
+                    if (st.active && st.time > 0) nextSpeedrunQuestion();
+                }, 600);
+            }
+        }
+
+        function showFloatScore(text, anchorEl, isBad) {
+            const card = document.getElementById('speedrunCard');
+            const cardRect = card.getBoundingClientRect();
+            const anchorRect = anchorEl.getBoundingClientRect();
+            const span = document.createElement('div');
+            span.className = 'float-score' + (isBad ? ' bad' : '');
+            span.textContent = text;
+            span.style.left = (anchorRect.left - cardRect.left + anchorRect.width / 2 - 20) + 'px';
+            span.style.top = (anchorRect.top - cardRect.top) + 'px';
+            card.appendChild(span);
+            setTimeout(() => span.remove(), 1000);
+        }
+
+        function endSpeedrun() {
+            const st = window.speedrunState;
+            if (!st.active) return;
+            st.active = false;
+            if (st.interval) {
+                clearInterval(st.interval);
+                st.interval = null;
+            }
+            st.locked = true;
+
+            document.getElementById('finalScore').textContent = st.score + ' очков';
+
+            const recordEl = document.getElementById('recordMsg');
+            if (st.score > st.best) {
+                st.best = st.score;
+                localStorage.setItem('speedrunBest', st.best);
+                document.getElementById('speedrunBest').textContent = st.best;
+                recordEl.textContent = '🏆 НОВЫЙ РЕКОРД!';
+                recordEl.style.color = '#f39c12';
+            } else {
+                recordEl.textContent = `Рекорд: ${st.best}`;
+                recordEl.style.color = '#666';
+            }
+            document.getElementById('speedrunModal').classList.add('active');
+        }
+
+        function exitSpeedrun() {
+            const st = window.speedrunState;
+            st.active = false;
+            if (st.interval) {
+                clearInterval(st.interval);
+                st.interval = null;
+            }
+            document.getElementById('speedrunModal').classList.remove('active');
+            showScreen('menuScreen');
+        }
+    </script>
+</body>
+</html>
