@@ -454,11 +454,11 @@ GAMES.g3=(()=>{
       const duoR=d.offsetLeft+d.offsetWidth*.78;
       if(phase==='run'&&state==='ok'&&obx<=duoR+sp*.18){
         const jd=Math.min(1.7,Math.max(.6,(d.offsetWidth+90)/sp));d.style.setProperty('--jd',jd+'s');
-        d.classList.remove('jump');void d.offsetWidth;d.classList.add('jump');phase='pass';cleared++;travel=Math.max(4.3,travel-.25);
+        d.classList.remove('jump','bump');void d.offsetWidth;d.classList.add('jump');phase='pass';cleared++;travel=Math.max(4.3,travel-.25);
       }else if(phase==='run'&&obx<=duoR){
         if(state==='wait')say('#g3say',`Too slow! It’s <b>${v[f]}</b>.`,'bad');
         $$('#g3opts .opt').forEach(b=>{b.disabled=true;if(b.textContent===v[f])b.classList.add('good')});
-        hearts--;hud();sfx.bad();d.classList.remove('bump');void d.offsetWidth;d.classList.add('bump');ob().classList.add('hit');phase='gap';gap=1.6;
+        hearts--;hud();sfx.bad();d.classList.remove('bump','jump');void d.offsetWidth;d.classList.add('bump');ob().classList.add('hit');phase='gap';gap=1.6;
       }
       if(phase==='pass'&&obx<-90){phase='gap';gap=.7}
       if(phase==='gap'){gap-=dt;if(gap<=0)spawn()}
