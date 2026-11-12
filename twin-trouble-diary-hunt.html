@@ -420,6 +420,21 @@ const SECRET = [
  'Mia listened at the door and heard her parents',
  'Mum and Dad talked about the twins that evening'
 ];
+// other correct word orders (Mum and Dad / Dad and Mum is added automatically)
+const ALT_ORDERS={
+ 'Lia stuck out her tongue':['Lia stuck her tongue out'],
+ 'Lia stuck out her tongue in every family photo':['Lia stuck her tongue out in every family photo'],
+ 'Mum chose a pink dress for Lia on Saturday':['Mum chose a pink dress on Saturday for Lia'],
+ 'Mum was happy with Mia but angry with Lia':['Mum was angry with Lia but happy with Mia'],
+ 'Dad made pancakes for the girls on Sunday morning':['Dad made pancakes on Sunday morning for the girls'],
+ 'Lia wrote her best song for Mum that evening':['Lia wrote her best song that evening for Mum']
+};
+function accepted(target){
+  const list=[target,...(ALT_ORDERS[target]||[])];
+  const swap=s=>s.replace(/Mum and Dad|Dad and Mum/g,m=>m==='Mum and Dad'?'Dad and Mum':'Mum and Dad');
+  list.slice().forEach(s=>{const w=swap(s);if(w!==s)list.push(w)});
+  return list;
+}
 const PAST_V=['be','be','have','wear','choose','say','write','go','read','take','hear','stick out','do','see','make','get','come'];
 const ADJ_PAIRS=[['neat','messy'],['quiet','loud'],['lazy','hardworking'],['kind','rude'],['easygoing','bossy'],['sweet','rebellious']];
 const ADJ_SINGLE=['friendly','shy','caring','creative'];
@@ -781,7 +796,7 @@ function renderBuild(body){
     let all=true;
     items().forEach((div,k)=>{if(RS.okb[k])return;const it=st.items[k];
       const built=[...div.querySelector('.line').children].map(b=>b.textContent).join(' ');
-      if(built===it._t){RS.okb[k]=true;div.classList.remove('bad');div.classList.add('ok');div.querySelector('.hold').innerHTML='';div.querySelector('.pool').style.display='none';div.querySelector('.line').insertAdjacentText('beforeend','.')}
+      if(accepted(it._t).includes(built)){RS.okb[k]=true;div.classList.remove('bad');div.classList.add('ok');div.querySelector('.hold').innerHTML='';div.querySelector('.pool').style.display='none';div.querySelector('.line').insertAdjacentText('beforeend','.')}
       else{all=false;div.classList.remove('bad');void div.offsetWidth;div.classList.add('bad')}});
     if(all)(RS.i==='final'?finalDone():complete());else afterFail();
   };
